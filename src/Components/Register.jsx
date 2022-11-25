@@ -1,12 +1,9 @@
 import axios from "axios";
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-    const navigate = useNavigate();
 
     const [fname, setFname] = useState("");
     const [lname, setLname] = useState("");
@@ -20,11 +17,12 @@ const Register = () => {
     const [answer, setAnswer] = useState("");
     const [otp, setOtp] = useState("");
 
+    const [countryCode, setCountryCode] = useState('92')
     const [wstatus, setWstatus] = useState(false);
     const [pstatus, setPstatus] = useState(false);
     const [qstatus, setQstatus] = useState(false);
 
-    const [status, setStatus] = useState("Welcome");
+    // const [status, setStatus] = useState("Welcome");
     const [val, setVal] = useState('')
     const [index, setIndex] = useState(1);
 
@@ -41,43 +39,28 @@ const Register = () => {
             lastname: lname,
             question: question,
             answer: answer,
-            role_id: "2",
+            role_id: "5",
         };
 
-        axios
-            .post("https://apis.tradingtube.net/api/register", userObj)
+        axios.post("https://apis.tradingtube.net/api/register", userObj)
             .then(res => {
-                console.log(res);
                 toast.success("Resgistered Successfully", { theme: "dark" });
             })
             .catch(err => {
                 if (err.response.data.status === "401") {
-                    toast.warn(err.response.data.message, { theme: "dark" })
+                    toast.warn(err.response.data.message, { theme: "dark" });
                 }
                 else {
-                    toast.warning("Error While registering", { theme: "dark" });
+                    toast.warning(err.response.data.message, { theme: "dark" });
                 }
             });
     };
 
-
-    // const otpMatching = () => {
-    //     axios.post(`https://telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com/sms-verification-code?phoneNumber=${phone} &verifyCode=${val}&appName=tradingtube`)
-    //         .then((res) => {
-    //             toast.success('Registered Successfully')
-    //             console.log(res)
-    //         })
-    //         .catch((err) => {
-    //             console.log(err)
-    //         })
-    // }
-
     const randomNum = () => {
         var randomVal = Math.floor(1000 + Math.random() * 9000);
-        console.log(val);
+        console.log(randomVal);
         setVal(randomVal)
     }
-
 
     const onNext = () => {
         if (index === 1) {
@@ -94,6 +77,9 @@ const Register = () => {
                 cnic !== ""
             ) {
                 setIndex(index + 1);
+                // function for the random number generator
+                randomNum()
+
             }
             else if (password !== cnfrmPassword) {
                 toast.warn('Password doesnot match')
@@ -103,17 +89,53 @@ const Register = () => {
                 setPstatus(true);
             }
         } else if (index === 3) {
+
             if (answer !== "") {
                 setIndex(index + 1);
-                randomNum()
+                sendOtp()
+
             } else {
                 toast.warning("Please fill all fields");
                 setQstatus(true);
             }
-        } else {
+        }
+        else if (index === 4) {
+            //    toast.warn("you are in index 4")
+            if (Number(otp) === Number(val)) {
+
+                submitData()
+            }
+            else {
+                toast.warn("Error while adding OTP")
+            }
+        }
+        else {
             console.log('');
         }
     };
+
+    const sendOtp = () => {
+        const options = {
+            method: 'POST',
+            headers: {
+                'X-RapidAPI-Key': 'be434c3026msh50dc650f31b5e59p1380e1jsn8889f821e46d',
+                'X-RapidAPI-Host': 'telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com'
+            }
+        };
+        fetch(`https://telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com/sms-verification-code?phoneNumber=${countryCode + phone}&verifyCode=${val}&appName=tradingtube`, options)
+            .then(response => response.json())
+            .then(response => {
+                if (response.message === "Invalid phone number") {
+                    toast.warn('Cant send OTP, please Enter a valid number')
+                    setIndex(2)
+                    // setErrorCode("phone")
+                    // setErrorMessage("Cannot send otp on this phone no please check no again.")
+                }
+                console.log(response)
+            })
+            .catch(err => console.error(err));
+    }
+
 
     // const RenderView = () => {
     //     if (status === "Welcome") {
@@ -390,8 +412,6 @@ const Register = () => {
                                 adipisicing elit. Ullam beatae at possimus totam laborum dolorum.
                             </p>
                         </>
-
-
                 }
 
                 <div className="">
@@ -404,14 +424,14 @@ const Register = () => {
                                 <>
                                     <div className="card-body">
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 First Name
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 onChange={(e) => setFname(e.target.value)}
-                                                placeholder="Enter your first name"
+                                                placeholder="Enter your first name" defaultValue={fname}
                                                 style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
@@ -426,14 +446,14 @@ const Register = () => {
                                             />
                                         </div>
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Last Name
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 onChange={(e) => setLname(e.target.value)}
-                                                placeholder="Enter your last name"
+                                                placeholder="Enter your last name" defaultValue={lname}
                                                 style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
@@ -448,14 +468,14 @@ const Register = () => {
                                             />
                                         </div>
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 User Name
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 onChange={(e) => setUserName(e.target.value)}
-                                                placeholder="Enter your username"
+                                                placeholder="Enter your username" defaultValue={userName}
                                                 style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
@@ -470,14 +490,14 @@ const Register = () => {
                                             />
                                         </div>
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Email
                                             </label>
                                             <input
                                                 type="email"
                                                 className="form-control"
                                                 onChange={(e) => setEmail(e.target.value)}
-                                                placeholder="Enter your email"
+                                                placeholder="Enter your email" defaultValue={email}
                                                 style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
@@ -496,39 +516,44 @@ const Register = () => {
                             ) : (
                                 ''
                             )}
+
                             {index === 2 ? (
                                 <>
                                     <div className="card-body">
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
-                                                Phone No.
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
+                                                Phone Number
                                             </label>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                placeholder="+92 XXX XXXXXXX"
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                style={{
+                                            <div className="input-group mb-3">
+                                                <span className="input-group-text" style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
                                                     borderRadius: "10PX",
                                                     borderColor:
-                                                        pstatus === true && phone === ""
-                                                            ? "red"
-                                                            : "#CEB775",
-                                                }}
-                                                aria-label="Sizing example input"
-                                                aria-describedby="inputGroup-sizing-lg"
-                                            />
+                                                        "#CEB775",
+                                                }} id="basic-addon1">+92</span>
+                                                <input type="number" className="form-control" placeholder=" XXX XXXXXXX"
+                                                    onChange={(e) => setPhone(e.target.value)} defaultValue={phone}
+                                                    style={{
+                                                        backgroundColor: "#171717",
+                                                        color: "#F6F6F6",
+                                                        borderRadius: "10PX",
+                                                        borderColor:
+                                                            pstatus === true && phone === ""
+                                                                ? "red"
+                                                                : "#CEB775",
+                                                    }} aria-label="Username" aria-describedby="basic-addon1" />
+                                            </div>
+
                                         </div>
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Password
                                             </label>
                                             <input
                                                 type="password"
                                                 className="form-control"
-                                                placeholder="Enter your password"
+                                                placeholder="Enter your password" defaultValue={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 style={{
                                                     backgroundColor: "#171717",
@@ -544,12 +569,12 @@ const Register = () => {
                                             />
                                         </div>
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Confirm Password
                                             </label>
                                             <input
                                                 type="password"
-                                                className="form-control"
+                                                className="form-control" defaultValue={cnfrmPassword}
                                                 onChange={(e) => setcnfrmPassword(e.target.value)}
                                                 placeholder="Re-type your password"
                                                 style={{
@@ -566,12 +591,12 @@ const Register = () => {
                                             />
                                         </div>
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 CNIC
                                             </label>
                                             <input
                                                 type="number"
-                                                className="form-control"
+                                                className="form-control" defaultValue={cnic}
                                                 onChange={(e) => setCnic(e.target.value)}
                                                 placeholder="Type your CNIC without dashes"
                                                 style={{
@@ -595,11 +620,11 @@ const Register = () => {
                                 <>
                                     <div className="card-body">
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Questions
                                             </label>
                                             <select
-                                                className="form-select"
+                                                className="form-select" defaultValue={answer}
                                                 onChange={(e) => setQuestion(e.target.value)}
                                                 aria-label="Default select example"
                                                 style={{
@@ -619,12 +644,12 @@ const Register = () => {
                                             </select>
                                         </div>
                                         <div className="form-label">
-                                            <label for="exampleInputEmail1" class="form-label">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Answer
                                             </label>
                                             <input
                                                 type="text"
-                                                className="form-control"
+                                                className="form-control" defaultValue={answer}
                                                 onChange={(e) => setAnswer(e.target.value)}
                                                 placeholder="Answer of the question ..."
                                                 style={{
@@ -679,6 +704,8 @@ const Register = () => {
                         </div>
                     </div>
                 </div>
+
+
                 <div className="d-flex justify-content-center">
                     {index === 1 ? (
                         ''
@@ -687,35 +714,38 @@ const Register = () => {
                             onClick={() => setIndex(index - 1)}
                             className="btn btn-outline-warning text-white btn-lg mt-2 me-2"
                         >
-                            <i className="fa-solid fa-chevron-left" />{" "}
+                            <i className="fa-solid fa-chevron-left" />
                         </button>
                     )}
 
 
-                    {
+                    {/* {
                         index === 3 ? <button
                             onClick={submitData}
                             className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
                         >
-                            Continue <i className="fa-solid fa-chevron-right" />{" "}
+                            Continue <i className="fa-solid fa-chevron-right" />
                         </button> : ''
-                    }
+                    } */}
 
-                    {
+                    {/* {
                         index === 3 ? '' :
-                            <button
-                                onClick={onNext}
-                                className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
-                            >
-                                Continue <i className="fa-solid fa-chevron-right" />{" "}
-                            </button>
-                    }
-                    {/* <button
-            onClick={onNext}
-            className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
-          >
-            Continue <i className="fa-solid fa-chevron-right" />{" "}
-          </button> */}
+                        <button
+                            onClick={onNext}
+                            className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
+                        >
+                            Continue <i className="fa-solid fa-chevron-right" />
+                        </button>
+                    } */}
+
+
+                    <button
+                        onClick={onNext}
+                        className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
+                    >
+                        Continue <i className="fa-solid fa-chevron-right" />{" "}
+                    </button>
+
                 </div>
             </div>
         </div>
