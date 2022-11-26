@@ -90,7 +90,7 @@ const Register = () => {
 
             }
             else if (password !== cnfrmPassword) {
-                toast.warn('Password doesnot match')
+                toast.warn('Password doesnot match', { theme: 'dark' })
             }
             else {
                 toast.warning("Please fill all fields", { theme: "dark" });
@@ -402,7 +402,7 @@ const Register = () => {
                 {
                     index === 4 ?
                         <>
-                            <div className="text-center" style={{marginTop:'6em'}}>
+                            <div className="text-center" style={{ marginTop: '6em' }}>
                                 <h1>Verification</h1>
                                 <p className="me-3 ms-3">
                                     Please Enter the OTP sent to the provided number, if you do not receieved the OTP, you can try again later.

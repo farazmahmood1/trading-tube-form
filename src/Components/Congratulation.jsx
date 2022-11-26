@@ -7,7 +7,7 @@ const Congratulation = ({ shouldShow, closeModal }) => {
 
             <Modal open={shouldShow}>
                 <div className='card-body text-white text-center'>
-                    <h2 style={{color:'#ceb775'}}>Congratulations,</h2>
+                    <h2 style={{ color: '#ceb775' }}>Congratulations,</h2>
                     <br className='bg-primary' />
                     <h5>You're successfully registered on trading tube.</h5>
                     <br />
