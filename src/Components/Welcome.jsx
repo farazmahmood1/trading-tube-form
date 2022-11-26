@@ -1,11 +1,12 @@
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from 'react';
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom"
+import { useNavigate , useLocation } from "react-router-dom"
 
 toast.configure()
 const Welcome = () => {
     const navigate = useNavigate();
+    const location = useLocation()
 
     const [code, setCode] = useState('')
     const [loader, setLoader] = useState(false)
@@ -32,7 +33,7 @@ const Welcome = () => {
                     toast.warning(`OTP ${result.message}`, { theme: "dark" })
                 }
                 else {
-                    toast.success('Successfully added OTP', { theme: 'dark' })
+                    toast.success('Successfully added refferal code', { theme: 'dark' })
                     setInterval(() => {
                         navigate('/Register')
                     }, 1000);
@@ -51,18 +52,29 @@ const Welcome = () => {
             });
     }
 
+    // const urlEle = window.location.pathname('/');
+    // console.log(location.pathname)
+
+    const render = window.location.pathname
+    console.log(render)
+
 
     return (
         <div className='d-flex justify-content-center'>
             <div className='col-md-6' style={{ marginTop: "10em" }}>
                 <div className='center text-white text-center '>
-                    <h1>Register Yourself</h1>
-                    <p className='me-3 ms-3'>Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+                    <h1>Register Now!</h1>
+                    <p className='me-3 ms-3'>Welcome to trading tube, a platform where you can earn up to 50k a month easily!
+                        Enter the refer code below to register</p>
                     <div className="input-group input-group-lg">
                         <input type="text" className="form-control ms-2 me-2" onChange={(e) => setCode(e.target.value)} placeholder='Enter referal code ...' style={{ backgroundColor: "#171717", color: '#F6F6F6', borderColor: '#CEB775', borderRadius: '10PX' }} aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
                     </div>
                     {!error ? '' : <p className="text-danger mt-1">You added a wrong refferal code, Please verify the provided OTP</p>}
-                    <p className='mt-2'>If you dont't have a refferal code try this: <span style={{ color: '#CEB775' }}>M4GOG5</span> </p>
+
+                    <p className='mt-3'>Promotion offer is only for first 10,000 users, Hurry up only <span style={{ color: '#CEB775' }}>9000</span>/10000 registers left </p>
+
+
+                    {/* <p className='mt-2'>If you dont't have a refferal code try this: <span style={{ color: '#CEB775' }}>M4GOG5</span> </p> */}
                     {code ? <button className='btn btn-outline-warning text-white btn-lg mt-2' onClick={sendCode}>Continue {loader === true ? <i className='fa-solid fa-spinner fa-spin-pulse' /> : <i className='fa-solid fa-chevron-right' />} </button> : ''}
 
                 </div>

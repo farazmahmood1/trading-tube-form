@@ -66,7 +66,7 @@ const Register = () => {
 
     const randomNum = () => {
         var randomVal = Math.floor(1000 + Math.random() * 9000);
-        console.log(randomVal);
+        // console.log(randomVal);
         setVal(randomVal)
     }
 
@@ -75,7 +75,7 @@ const Register = () => {
             if (fname !== "" && lname !== "" && userName !== "" && email !== "") {
                 setIndex(index + 1);
             } else {
-                toast.warning("Please fill all fields");
+                toast.warning("Please fill all fields", { theme: "dark" });
                 setWstatus(true);
             }
         } else if (index === 2) {
@@ -395,8 +395,6 @@ const Register = () => {
     // };
 
 
-
-
     return (
         <div className="d-flex justify-content-center">
             <div className="col-md-6 text-white" style={{ marginTop: "3em" }}>
@@ -404,22 +402,20 @@ const Register = () => {
                 {
                     index === 4 ?
                         <>
-                            <div className="text-center">
+                            <div className="text-center" style={{marginTop:'6em'}}>
                                 <h1>Verification</h1>
                                 <p className="me-3 ms-3">
-                                    Register to continue Lorem ipsum dolor sit, amet
-                                    consectetur adipisicing elit. Ullam beatae at possimus
-                                    totam laborum dolorum.
+                                    Please Enter the OTP sent to the provided number, if you do not receieved the OTP, you can try again later.
                                 </p>
-                                <p>OTP code</p>
+                                {/* <p>OTP code</p> */}
                             </div>
                         </>
                         :
                         <>
                             <h1 className="text-center">Welcome</h1>
                             <p className="me-3 ms-3 text-center">
-                                Register to continue Lorem ipsum dolor sit, amet consectetur
-                                adipisicing elit. Ullam beatae at possimus totam laborum dolorum.
+                                Welcome to trading tube, a platform where you can earn up to 50k a month easily!
+                                Enter the refer code below to register.
                             </p>
                         </>
                 }
@@ -683,10 +679,7 @@ const Register = () => {
 
                             {index === 4 ? (
                                 <>
-                                    <div
-                                        className=" text-white text-center"
-                                    >
-
+                                    <div className=" text-white text-center">
                                         <div className="form-label">
                                             <input
                                                 type="number"
@@ -758,8 +751,7 @@ const Register = () => {
 
                 </div>
             </div>
-            {< Congratulation shouldShow={shouldShow}
-                closeModal={oncloseModal} />}
+            {< Congratulation shouldShow={shouldShow} />}
         </div>
     );
 };
