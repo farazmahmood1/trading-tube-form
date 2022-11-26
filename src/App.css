@@ -1,3 +1,8 @@
+:root {
+  --pretty-modal-modal-container-background-color: #23222D;
+  --pretty-modal-modal-container-border-radius: 10px;
+}
+
 body {
   background: #0f0e0e;
 }

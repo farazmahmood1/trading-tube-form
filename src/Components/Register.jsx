@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import Congratulation from "./Congratulation";
 
 const Register = () => {
 
@@ -21,6 +22,8 @@ const Register = () => {
     const [wstatus, setWstatus] = useState(false);
     const [pstatus, setPstatus] = useState(false);
     const [qstatus, setQstatus] = useState(false);
+
+    const [shouldShow, setShouldShow] = useState(false)
 
     // const [status, setStatus] = useState("Welcome");
     const [val, setVal] = useState('')
@@ -45,6 +48,7 @@ const Register = () => {
         axios.post("https://apis.tradingtube.net/api/register", userObj)
             .then(res => {
                 toast.success("Resgistered Successfully", { theme: "dark" });
+
             })
             .catch(err => {
                 if (err.response.data.status === "401") {
@@ -55,6 +59,10 @@ const Register = () => {
                 }
             });
     };
+
+    function oncloseModal() {
+        setShouldShow((prev) => !prev)
+    }
 
     const randomNum = () => {
         var randomVal = Math.floor(1000 + Math.random() * 9000);
@@ -102,8 +110,8 @@ const Register = () => {
         else if (index === 4) {
             //    toast.warn("you are in index 4")
             if (Number(otp) === Number(val)) {
-
                 submitData()
+                oncloseModal()
             }
             else {
                 toast.warn("Error while adding OTP")
@@ -385,6 +393,8 @@ const Register = () => {
     //         console.log("Something went wrong");
     //     }
     // };
+
+
 
 
     return (
@@ -748,6 +758,8 @@ const Register = () => {
 
                 </div>
             </div>
+            {< Congratulation shouldShow={shouldShow}
+                closeModal={oncloseModal} />}
         </div>
     );
 };

@@ -32,7 +32,7 @@ const Welcome = () => {
                     toast.warning(`OTP ${result.message}`, { theme: "dark" })
                 }
                 else {
-                    toast.success('Sucess')
+                    toast.success('Successfully added OTP', { theme: 'dark' })
                     setInterval(() => {
                         navigate('/Register')
                     }, 1000);
@@ -61,7 +61,7 @@ const Welcome = () => {
                     <div className="input-group input-group-lg">
                         <input type="text" className="form-control ms-2 me-2" onChange={(e) => setCode(e.target.value)} placeholder='Enter referal code ...' style={{ backgroundColor: "#171717", color: '#F6F6F6', borderColor: '#CEB775', borderRadius: '10PX' }} aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
                     </div>
-                    {!error ? '' : <p className="text-danger">You added a wrong refferal code</p>}
+                    {!error ? '' : <p className="text-danger mt-1">You added a wrong refferal code, Please verify the provided OTP</p>}
                     <p className='mt-2'>If you dont't have a refferal code try this: <span style={{ color: '#CEB775' }}>M4GOG5</span> </p>
                     {code ? <button className='btn btn-outline-warning text-white btn-lg mt-2' onClick={sendCode}>Continue {loader === true ? <i className='fa-solid fa-spinner fa-spin-pulse' /> : <i className='fa-solid fa-chevron-right' />} </button> : ''}
 
