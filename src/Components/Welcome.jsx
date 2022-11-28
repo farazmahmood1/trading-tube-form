@@ -14,7 +14,6 @@ const Welcome = () => {
     const [error, setError] = useState("");
 
     const sendCode = () => {
-        // console.log(code)
 
         if (!code) {
             toast.warn('Please enter a referral code', { theme: 'dark' })
@@ -28,8 +27,7 @@ const Welcome = () => {
                 .then((res) => {
                     if (res.data.status === "200") {
                         setLoader(false);
-                        // console.log(RefObj);
-                        toast.info(`Referral code ${res.data.message}`, { theme: "dark" });
+                        toast.info(`Referral ${res.data.message}`, { theme: "dark" });
                         setInterval(() => {
                             navigate("/Register");
                         }, 1000);
@@ -44,14 +42,12 @@ const Welcome = () => {
                         setLoader(false);
                     }
 
-                    // console.log(res.data)
                 })
                 .catch((error) => {
                     if (error.status === "400") {
                         setLoader(false);
                         toast.warning(`Referral code ${error.message}`, { theme: "dark" });
                     } else {
-                        // console.log(error)
                         toast.warning("Something went wrong", { theme: "dark" });
                     }
                 });

@@ -3,6 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Congratulation from "./Congratulation";
+import CountryCode from './CountryCode'
 
 const Register = () => {
 
@@ -24,8 +25,6 @@ const Register = () => {
     const [qstatus, setQstatus] = useState(false);
 
     const [shouldShow, setShouldShow] = useState(false)
-
-    // const [status, setStatus] = useState("Welcome");
     const [val, setVal] = useState('')
     const [index, setIndex] = useState(1);
 
@@ -34,7 +33,7 @@ const Register = () => {
             email: email,
             username: userName,
             cnic: cnic,
-            phone: phone,
+            phone: countryCode + phone,
             password: password,
             password_confirmation: cnfrmPassword,
             code: otp,
@@ -48,7 +47,6 @@ const Register = () => {
         axios.post("https://apis.tradingtube.net/api/register", userObj)
             .then(res => {
                 toast.success("Resgistered Successfully", { theme: "dark" });
-
             })
             .catch(err => {
                 if (err.response.data.status === "401") {
@@ -66,7 +64,6 @@ const Register = () => {
 
     const randomNum = () => {
         var randomVal = Math.floor(1000 + Math.random() * 9000);
-        console.log(randomVal);
         setVal(randomVal)
     }
 
@@ -87,10 +84,8 @@ const Register = () => {
                 setIndex(index + 1);
                 // function for the random number generator
                 randomNum()
-
             }
-            else if(cnic.length > 14 || cnic.length < 12){
-                toast.warn('Please Enter a valid CNiC', { theme: 'dark' })            }
+
             else if (password !== cnfrmPassword) {
                 toast.warn('Password does not match', { theme: 'dark' })
             }
@@ -105,12 +100,11 @@ const Register = () => {
                 sendOtp()
 
             } else {
-                toast.warning("Please fill all fields");
+                toast.warning("Please fill all fields", { theme: "dark" });
                 setQstatus(true);
             }
         }
         else if (index === 4) {
-            //    toast.warn("you are in index 4")
             if (Number(otp) === Number(val)) {
                 submitData()
                 oncloseModal()
@@ -120,7 +114,7 @@ const Register = () => {
             }
         }
         else {
-            console.log('');
+            return null;
         }
     };
 
@@ -136,266 +130,16 @@ const Register = () => {
             .then(response => response.json())
             .then(response => {
                 if (response.message === "Invalid phone number") {
-                    toast.warn('Cant send OTP, please Enter a valid number')
+                    toast.warn('Cant send OTP, please Enter a valid number', { theme: 'dark' })
                     setIndex(2)
-                    // setErrorCode("phone")
-                    // setErrorMessage("Cannot send otp on this phone no please check no again.")
                 }
-                console.log(response)
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                toast.warn(`${err.message}`, { theme: 'dark' })
+            });
     }
 
-
-    // const RenderView = () => {
-    //     if (status === "Welcome") {
-    //         return (
-    //             <>
-    //                 <div className="col-md-6 text-white" style={{ marginTop: "3em" }}>
-    //                     <h1 className="text-center">Welcome</h1>
-    //                     <p className="me-3 ms-3 text-center">
-    //                         Register to continue Lorem ipsum dolor sit, amet consectetur
-    //                         adipisicing elit. Ullam beatae at possimus totam laborum dolorum.
-    //                     </p>
-    //                     <div className="">
-    //                         <div className="col-lg-12 mx-auto">
-    //                             <div
-    //                                 className="card bg-dark p-3 m-2"
-    //                                 style={{ borderRadius: "10px" }}
-    //                             >
-    //                                 <div className="card-body">
-    //                                     <div className="form-label">
-    //                                         <label for="exampleInputEmail1" class="form-label">
-    //                                             First Name
-    //                                         </label>
-    //                                         <input
-    //                                             type="text"
-    //                                             className="form-control"
-    //                                             onChange={(e) => setFname(e.target.value)}
-    //                                             placeholder="Enter your first name"
-    //                                             style={{
-    //                                                 backgroundColor: "#171717",
-    //                                                 color: "#F6F6F6",
-    //                                                 borderRadius: "10PX",
-    //                                                 borderColor:
-    //                                                     wstatus === true && fname === ""
-    //                                                         ? "red"
-    //                                                         : "#CEB775",
-    //                                             }}
-    //                                             aria-label="Sizing example input"
-    //                                             aria-describedby="inputGroup-sizing-lg"
-    //                                         />
-    //                                     </div>
-    //                                     <div className="form-label">
-    //                                         <label for="exampleInputEmail1" class="form-label">
-    //                                             Last Name
-    //                                         </label>
-    //                                         <input
-    //                                             type="text"
-    //                                             className="form-control"
-    //                                             onChange={(e) => setLname(e.target.value)}
-    //                                             placeholder="Enter your last name"
-    //                                             style={{
-    //                                                 backgroundColor: "#171717",
-    //                                                 color: "#F6F6F6",
-    //                                                 borderRadius: "10PX",
-    //                                                 borderColor:
-    //                                                     wstatus === true && fname === ""
-    //                                                         ? "red"
-    //                                                         : "#CEB775",
-    //                                             }}
-    //                                             aria-label="Sizing example input"
-    //                                             aria-describedby="inputGroup-sizing-lg"
-    //                                         />
-    //                                     </div>
-    //                                     <div className="form-label">
-    //                                         <label for="exampleInputEmail1" class="form-label">
-    //                                             User Name
-    //                                         </label>
-    //                                         <input
-    //                                             type="text"
-    //                                             className="form-control"
-    //                                             onChange={(e) => setUserName(e.target.value)}
-    //                                             placeholder="Enter your username"
-    //                                             style={{
-    //                                                 backgroundColor: "#171717",
-    //                                                 color: "#F6F6F6",
-    //                                                 borderRadius: "10PX",
-    //                                                 borderColor:
-    //                                                     wstatus === true && fname === ""
-    //                                                         ? "red"
-    //                                                         : "#CEB775",
-    //                                             }}
-    //                                             aria-label="Sizing example input"
-    //                                             aria-describedby="inputGroup-sizing-lg"
-    //                                         />
-    //                                     </div>
-    //                                     <div className="form-label">
-    //                                         <label for="exampleInputEmail1" class="form-label">
-    //                                             Email
-    //                                         </label>
-    //                                         <input
-    //                                             type="email"
-    //                                             className="form-control"
-    //                                             onChange={(e) => setEmail(e.target.value)}
-    //                                             placeholder="Enter your email"
-    //                                             style={{
-    //                                                 backgroundColor: "#171717",
-    //                                                 color: "#F6F6F6",
-    //                                                 borderRadius: "10PX",
-    //                                                 borderColor:
-    //                                                     wstatus === true && fname === ""
-    //                                                         ? "red"
-    //                                                         : "#CEB775",
-    //                                             }}
-    //                                             aria-label="Sizing example input"
-    //                                             aria-describedby="inputGroup-sizing-lg"
-    //                                         />
-    //                                     </div>
-    //                                 </div>
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                     <div className="d-flex justify-content-center">
-    //                         <button
-    //                             onClick={() => navigate("/")}
-    //                             className="btn btn-outline-warning text-white btn-lg mt-2 me-2"
-    //                         >
-    //                             <i className="fa-solid fa-chevron-left" />{" "}
-    //                         </button>
-    //                         <button
-    //                             onClick={submitData}
-    //                             className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
-    //                         >
-    //                             Continue <i className="fa-solid fa-chevron-right" />{" "}
-    //                         </button>
-    //                     </div>
-    //                 </div>
-    //             </>
-    //         );
-    //     } else if (status === "Contact") {
-    //         return (
-    //             <>
-    //                 <div className="col-md-6 text-white" style={{ marginTop: "3em" }}>
-    //                     <h1 className="text-center">Welcome</h1>
-    //                     <p className="me-3 ms-3 text-center">
-    //                         Register to continue Lorem ipsum dolor sit, amet consectetur
-    //                         adipisicing elit. Ullam beatae at possimus totam laborum dolorum.
-    //                     </p>
-    //                     <div className="">
-    //                         <div className="col-lg-12 mx-auto">
-    //                             <div
-    //                                 className="card bg-dark p-3 m-2"
-    //                                 style={{ borderRadius: "10px" }}
-    //                             ></div>
-    //                         </div>
-    //                     </div>
-
-    //                     <div className="d-flex justify-content-center">
-    //                         <button
-    //                             onClick={() => setStatus("Welcome")}
-    //                             className="btn btn-outline-warning text-white btn-lg mt-2 me-2"
-    //                         >
-    //                             <i className="fa-solid fa-chevron-left" />{" "}
-    //                         </button>
-    //                         <button
-    //                             onClick={() => setStatus("Question")}
-    //                             className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
-    //                         >
-    //                             Continue <i className="fa-solid fa-chevron-right" />{" "}
-    //                         </button>
-    //                     </div>
-    //                 </div>
-    //             </>
-    //         );
-    //     } else if (status === "Question") {
-    //         return (
-    //             <>
-    //                 <div className="col-md-6 text-white" style={{ marginTop: "3em" }}>
-    //                     <h1 className="text-center">Welcome</h1>
-    //                     <p className="me-3 ms-3 text-center">
-    //                         Register to continue Lorem ipsum dolor sit, amet consectetur
-    //                         adipisicing elit. Ullam beatae at possimus totam laborum dolorum.
-    //                     </p>
-    //                     <div className="">
-    //                         <div className="col-lg-12 mx-auto">
-    //                             <div
-    //                                 className="card bg-dark p-3 m-2"
-    //                                 style={{ borderRadius: "10px" }}
-    //                             ></div>
-    //                         </div>
-    //                     </div>
-
-    //                     <div className="d-flex justify-content-center">
-    //                         <button
-    //                             onClick={() => setStatus("Contact")}
-    //                             to="/Contact"
-    //                             className="btn btn-outline-warning text-white btn-lg mt-2 me-2"
-    //                         >
-    //                             <i className="fa-solid fa-chevron-left" />{" "}
-    //                         </button>
-    //                         <button
-    //                             onClick={() => setStatus("Otp")}
-    //                             className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
-    //                         >
-    //                             Continue <i className="fa-solid fa-chevron-right" />{" "}
-    //                         </button>
-    //                     </div>
-    //                 </div>
-    //             </>
-    //         );
-    //     } else if (status === "Otp") {
-    //         return (
-    //             <>
-    //                 <div
-    //                     className="col-md-6 text-white text-center"
-    //                     style={{ marginTop: "10em" }}
-    //                 >
-    //                     <h1>Verification</h1>
-    //                     <p className="me-3 ms-3">
-    //                         Register to continue Lorem ipsum dolor sit, amet consectetur
-    //                         adipisicing elit. Ullam beatae at possimus totam laborum dolorum.
-    //                     </p>
-
-    //                     <div className="form-label">
-    //                         <label for="exampleInputEmail1" class="form-label">
-    //                             OTP Code
-    //                         </label>
-    //                         <input
-    //                             type="number"
-    //                             className="form-control form-control-lg"
-    //                             onChange={(e) => setOtp(e.target.value)}
-    //                             placeholder="Enter the OTP sent to your Phone"
-    //                             style={{
-    //                                 backgroundColor: "#171717",
-    //                                 color: "#F6F6F6",
-    //                                 borderColor: "#CEB775",
-    //                                 borderRadius: "10PX",
-    //                             }}
-    //                             aria-label="Sizing example input"
-    //                             aria-describedby="inputGroup-sizing-lg"
-    //                         />
-    //                     </div>
-    //                     <div className="d-flex justify-content-center">
-    //                         <button
-    //                             onClick={() => setStatus("Question")}
-    //                             to="/Contact"
-    //                             className="btn btn-outline-warning text-white btn-lg mt-2 me-2"
-    //                         >
-    //                             <i className="fa-solid fa-chevron-left mt-2" />{" "}
-    //                         </button>
-    //                         <button className="btn btn-outline-warning text-white btn-lg mt-2 ms-2">
-    //                             Register Now <i className="fa-solid fa-chevron-right" />{" "}
-    //                         </button>
-    //                     </div>
-    //                 </div>
-    //             </>
-    //         );
-    //     } else {
-    //         console.log("Something went wrong");
-    //     }
-    // };
-
+    console.log(CountryCode)
 
     return (
         <div className="d-flex justify-content-center">
@@ -531,7 +275,7 @@ const Register = () => {
                                             <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Phone Number
                                             </label>
-                                            <div className="input-group mb-3">
+                                            {/* <div className="input-group mb-3">
                                                 <span className="input-group-text" style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
@@ -550,7 +294,42 @@ const Register = () => {
                                                                 ? "red"
                                                                 : "#CEB775",
                                                     }} aria-label="Username" aria-describedby="basic-addon1" />
+                                            </div> */}
+
+                                            <div className="input-group">
+                                                <select className="form-select" id="inputGroupSelect04" onChange={(e) => setCountryCode(e.target.value)} style={{
+                                                    backgroundColor: "#171717",
+                                                    color: "#F6F6F6",
+                                                    borderRadius: "10PX",
+                                                    borderColor:
+                                                        "#CEB775",
+                                                }} aria-label="Example select with button addon">
+
+                                                    {
+                                                        CountryCode.map((items) => {
+                                                            return (
+                                                                <>
+                                                                    <option>{items.code}</option>
+                                                                </>
+                                                            )
+                                                        })
+                                                    }
+
+                                                </select>
+                                                <input type="number" className="form-control w-50" placeholder=" XXX XXXXXXX"
+                                                    onChange={(e) => setPhone(e.target.value)} defaultValue={phone}
+                                                    style={{
+                                                        backgroundColor: "#171717",
+                                                        color: "#F6F6F6",
+                                                        borderRadius: "10PX",
+                                                        borderColor:
+                                                            pstatus === true && phone === ""
+                                                                ? "red"
+                                                                : "#CEB775",
+                                                    }} aria-label="Username" aria-describedby="basic-addon1" />
                                             </div>
+
+
 
                                         </div>
                                         <div className="form-label">
@@ -721,27 +500,6 @@ const Register = () => {
                             <i className="fa-solid fa-chevron-left" />
                         </button>
                     )}
-
-
-                    {/* {
-                        index === 3 ? <button
-                            onClick={submitData}
-                            className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
-                        >
-                            Continue <i className="fa-solid fa-chevron-right" />
-                        </button> : ''
-                    } */}
-
-                    {/* {
-                        index === 3 ? '' :
-                        <button
-                            onClick={onNext}
-                            className="btn btn-outline-warning text-white btn-lg mt-2 ms-2"
-                        >
-                            Continue <i className="fa-solid fa-chevron-right" />
-                        </button>
-                    } */}
-
 
                     <button
                         onClick={onNext}
