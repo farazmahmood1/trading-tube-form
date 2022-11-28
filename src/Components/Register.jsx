@@ -66,7 +66,7 @@ const Register = () => {
 
     const randomNum = () => {
         var randomVal = Math.floor(1000 + Math.random() * 9000);
-        // console.log(randomVal);
+        console.log(randomVal);
         setVal(randomVal)
     }
 
@@ -89,8 +89,10 @@ const Register = () => {
                 randomNum()
 
             }
+            else if(cnic.length > 14 || cnic.length < 12){
+                toast.warn('Please Enter a valid CNiC', { theme: 'dark' })            }
             else if (password !== cnfrmPassword) {
-                toast.warn('Password doesnot match', { theme: 'dark' })
+                toast.warn('Password does not match', { theme: 'dark' })
             }
             else {
                 toast.warning("Please fill all fields", { theme: "dark" });
@@ -114,7 +116,7 @@ const Register = () => {
                 oncloseModal()
             }
             else {
-                toast.warn("Error while adding OTP")
+                toast.warn("Please enter a valid OTP", { theme: 'dark' })
             }
         }
         else {
@@ -405,7 +407,7 @@ const Register = () => {
                             <div className="text-center" style={{ marginTop: '6em' }}>
                                 <h1>Verification</h1>
                                 <p className="me-3 ms-3">
-                                    Please Enter the OTP sent to the provided number, if you do not receieved the OTP, you can try again later.
+                                    Please Enter the OTP that you have received on your phone number ,  if you do not received the OTP, you can try again later.
                                 </p>
                                 {/* <p>OTP code</p> */}
                             </div>
@@ -414,8 +416,7 @@ const Register = () => {
                         <>
                             <h1 className="text-center">Welcome</h1>
                             <p className="me-3 ms-3 text-center">
-                                Welcome to trading tube, a platform where you can earn up to 50k a month easily!
-                                Enter the refer code below to register.
+                                Please fill the following details to get registered on Trading Tube
                             </p>
                         </>
                 }
