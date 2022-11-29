@@ -1,9 +1,8 @@
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from 'axios';
-
 
 toast.configure();
 const Welcome = () => {
@@ -25,6 +24,7 @@ const Welcome = () => {
             }
             axios.post("https://apis.tradingtube.net/api/checkcode", RefObj)
                 .then((res) => {
+                    console.log(res)
                     if (res.data.status === "200") {
                         setLoader(false);
                         toast.info(`Referral ${res.data.message}`, { theme: "dark" });
@@ -44,6 +44,7 @@ const Welcome = () => {
 
                 })
                 .catch((error) => {
+                    console.log(error)
                     if (error.status === "400") {
                         setLoader(false);
                         toast.warning(`Referral code ${error.message}`, { theme: "dark" });
@@ -109,6 +110,7 @@ const Welcome = () => {
                         className="btn btn-outline-warning text-white btn-lg mt-2"
                         onClick={sendCode}
                     >
+
                         Continue{" "} {" "}
                         {loader === true ? (
                             <i className="fa-solid fa-spinner fa-spin-pulse" />

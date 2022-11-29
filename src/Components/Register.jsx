@@ -1,11 +1,11 @@
 import axios from "axios";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Congratulation from "./Congratulation";
 import CountryCode from './CountryCode'
 
-const Register = () => {
+const Register = ({ Code }) => {
 
     const [fname, setFname] = useState("");
     const [lname, setLname] = useState("");
@@ -28,6 +28,10 @@ const Register = () => {
     const [val, setVal] = useState('')
     const [index, setIndex] = useState(1);
 
+    const [passwordShown, setPasswordShown] = useState(false);
+    const [showPassword, setShowPassword] = useState(false)
+
+
     const submitData = () => {
         const userObj = {
             email: email,
@@ -36,7 +40,7 @@ const Register = () => {
             phone: countryCode + phone,
             password: password,
             password_confirmation: cnfrmPassword,
-            code: otp,
+            code: Code,
             firstname: fname,
             lastname: lname,
             question: question,
@@ -47,16 +51,22 @@ const Register = () => {
         axios.post("https://apis.tradingtube.net/api/register", userObj)
             .then(res => {
                 toast.success("Resgistered Successfully", { theme: "dark" });
+                console.log(res)
             })
             .catch(err => {
+                console.log(err)
                 if (err.response.data.status === "401") {
                     toast.warn(err.response.data.message, { theme: "dark" });
+                    console.log(err)
                 }
                 else {
                     toast.warning(err.response.data.message, { theme: "dark" });
                 }
             });
     };
+
+
+
 
     function oncloseModal() {
         setShouldShow((prev) => !prev)
@@ -129,6 +139,7 @@ const Register = () => {
         fetch(`https://telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com/sms-verification-code?phoneNumber=${countryCode + phone}&verifyCode=${val}&appName=tradingtube`, options)
             .then(response => response.json())
             .then(response => {
+                console.log(response)
                 if (response.message === "Invalid phone number") {
                     toast.warn('Cant send OTP, please Enter a valid number', { theme: 'dark' })
                     setIndex(2)
@@ -136,10 +147,18 @@ const Register = () => {
             })
             .catch(err => {
                 toast.warn(`${err.message}`, { theme: 'dark' })
+                console.log(err)
             });
     }
 
-    console.log(CountryCode)
+
+    const togglePassword = () => {
+        setPasswordShown(!passwordShown);
+    };
+
+    const showConfirmPassword = () => {
+        setShowPassword(!showPassword)
+    }
 
     return (
         <div className="d-flex justify-content-center">
@@ -265,7 +284,7 @@ const Register = () => {
                                     </div>
                                 </>
                             ) : (
-                                ''
+                                null
                             )}
 
                             {index === 2 ? (
@@ -275,26 +294,7 @@ const Register = () => {
                                             <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Phone Number
                                             </label>
-                                            {/* <div className="input-group mb-3">
-                                                <span className="input-group-text" style={{
-                                                    backgroundColor: "#171717",
-                                                    color: "#F6F6F6",
-                                                    borderRadius: "10PX",
-                                                    borderColor:
-                                                        "#CEB775",
-                                                }} id="basic-addon1">+92</span>
-                                                <input type="number" className="form-control" placeholder=" XXX XXXXXXX"
-                                                    onChange={(e) => setPhone(e.target.value)} defaultValue={phone}
-                                                    style={{
-                                                        backgroundColor: "#171717",
-                                                        color: "#F6F6F6",
-                                                        borderRadius: "10PX",
-                                                        borderColor:
-                                                            pstatus === true && phone === ""
-                                                                ? "red"
-                                                                : "#CEB775",
-                                                    }} aria-label="Username" aria-describedby="basic-addon1" />
-                                            </div> */}
+
 
                                             <div className="input-group">
                                                 <select className="form-select" id="inputGroupSelect04" onChange={(e) => setCountryCode(e.target.value)} style={{
@@ -328,53 +328,61 @@ const Register = () => {
                                                                 : "#CEB775",
                                                     }} aria-label="Username" aria-describedby="basic-addon1" />
                                             </div>
-
-
-
                                         </div>
+
                                         <div className="form-label">
                                             <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Password
                                             </label>
-                                            <input
-                                                type="password"
-                                                className="form-control"
-                                                placeholder="Enter your password" defaultValue={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                style={{
-                                                    backgroundColor: "#171717",
-                                                    color: "#F6F6F6",
-                                                    borderRadius: "10PX",
-                                                    borderColor:
-                                                        pstatus === true && password === ""
-                                                            ? "red"
-                                                            : "#CEB775",
-                                                }}
-                                                aria-label="Sizing example input"
-                                                aria-describedby="inputGroup-sizing-lg"
-                                            />
+                                            <div className="form-input">
+                                                <input
+                                                    type={showPassword ? "text" : "password"}
+                                                    className="form-control"
+                                                    placeholder="Enter your password" defaultValue={password}
+                                                    onChange={(e) => setPassword(e.target.value)}
+                                                    style={{
+                                                        backgroundColor: "#171717",
+                                                        color: "#F6F6F6",
+                                                        borderRadius: "10PX",
+                                                        borderColor:
+                                                            pstatus === true && password === ""
+                                                                ? "red"
+                                                                : "#CEB775",
+                                                    }}
+                                                    aria-label="Sizing example input"
+                                                    aria-describedby="inputGroup-sizing-lg"
+                                                />
+                                                <span className="icon me-2">{showPassword === false ? <i className="fa-solid fa-eye" onClick={showConfirmPassword} /> : <i className="fa-solid fa-eye-slash" onClick={showConfirmPassword} />} </span>
+                                            </div>
                                         </div>
+
                                         <div className="form-label">
                                             <label htmlFor="exampleInputEmail1" className="form-label">
                                                 Confirm Password
                                             </label>
-                                            <input
-                                                type="password"
-                                                className="form-control" defaultValue={cnfrmPassword}
-                                                onChange={(e) => setcnfrmPassword(e.target.value)}
-                                                placeholder="Re-type your password"
-                                                style={{
-                                                    backgroundColor: "#171717",
-                                                    color: "#F6F6F6",
-                                                    borderRadius: "10PX",
-                                                    borderColor:
-                                                        pstatus === true && cnfrmPassword === ""
-                                                            ? "red"
-                                                            : "#CEB775",
-                                                }}
-                                                aria-label="Sizing example input"
-                                                aria-describedby="inputGroup-sizing-lg"
-                                            />
+
+                                            <div className="form-input">
+                                                <input
+                                                    type={passwordShown ? "text" : "password"}
+                                                    className="form-control" defaultValue={cnfrmPassword}
+                                                    onChange={(e) => setcnfrmPassword(e.target.value)}
+                                                    placeholder="Re-type your password"
+                                                    style={{
+                                                        backgroundColor: "#171717",
+                                                        color: "#F6F6F6",
+                                                        borderRadius: "10PX",
+                                                        borderColor:
+                                                            pstatus === true && cnfrmPassword === ""
+                                                                ? "red"
+                                                                : "#CEB775",
+                                                    }}
+                                                    aria-label="Sizing example input"
+                                                    aria-describedby="inputGroup-sizing-lg"
+                                                />
+                                                <span className="icon me-2">{passwordShown === false ? <i className="fa-solid fa-eye" onClick={togglePassword} /> : <i className="fa-solid fa-eye-slash" onClick={togglePassword} />} </span>
+                                            </div>
+
+
                                         </div>
                                         <div className="form-label">
                                             <label htmlFor="exampleInputEmail1" className="form-label">
@@ -399,7 +407,7 @@ const Register = () => {
                                     </div>
                                 </>
                             ) : (
-                                ''
+                                null
                             )}
 
                             {index === 3 ? (
@@ -454,7 +462,7 @@ const Register = () => {
                                     </div>
                                 </>
                             ) : (
-                                ''
+                                null
                             )}
 
                             {index === 4 ? (
@@ -471,8 +479,6 @@ const Register = () => {
                                                     color: "#F6F6F6",
                                                     borderRadius: "10PX",
                                                     borderColor:
-                                                        // fieldStatus === true && otp === ""
-                                                        //   ? "red":
                                                         "#CEB775",
                                                 }}
                                                 aria-label="Sizing example input"
@@ -482,7 +488,7 @@ const Register = () => {
                                     </div>
                                 </>
                             ) : (
-                                ''
+                                null
                             )}
                         </div>
                     </div>
@@ -491,7 +497,7 @@ const Register = () => {
 
                 <div className="d-flex justify-content-center">
                     {index === 1 ? (
-                        ''
+                        null
                     ) : (
                         <button
                             onClick={() => setIndex(index - 1)}

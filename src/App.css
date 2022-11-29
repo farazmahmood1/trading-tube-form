@@ -1,5 +1,5 @@
 :root {
-  --pretty-modal-modal-container-background-color: #23222D;
+  --pretty-modal-modal-container-background-color: #23222d;
   --pretty-modal-modal-container-border-radius: 10px;
 }
 
@@ -23,4 +23,24 @@ body {
   color: #fff;
   background-color: #ceb775;
   border-color: #ceb775;
+}
+
+.form-input {
+  position: relative;
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+}
+.icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 25px;
+  color: #ceb775;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  cursor: pointer;
+  font-size: 18px;
 }
