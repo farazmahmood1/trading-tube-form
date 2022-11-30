@@ -20,7 +20,7 @@ const Congratulation = ({ shouldShow }) => {
 
                     <div className="d-flex justify-content-center">
                         <button onClick={showToaster} className='btn btn-outline-warning me-1' > <i class="fa-brands fa-app-store-ios" /> for IOS</button>
-                        <a className='btn btn-outline-warning ms-1' target={'_blank'} href='https://play.google.com/store/apps/details?id=com.tradingtube' > <i class="fa-brands fa-google-play" /> for Android</a>
+                        <a className='btn btn-outline-warning ms-1' target={'_blank'} rel="noreferrer" href='https://play.google.com/store/apps/details?id=com.tradingtube' > <i class="fa-brands fa-google-play" /> for Android</a>
                     </div>
                 </div>
             </Modal>

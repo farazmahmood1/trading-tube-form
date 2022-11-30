@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Congratulation from "./Congratulation";
 import CountryCode from './CountryCode'
+import { useTimer } from 'react-timer-hook';
 
 const Register = ({ Code }) => {
 
@@ -31,6 +32,44 @@ const Register = ({ Code }) => {
     const [passwordShown, setPasswordShown] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
 
+    function MyTimer({ expiryTimestamp }) {
+        const {
+            seconds,
+            minutes,
+            isRunning,
+            restart,
+        } = useTimer({ expiryTimestamp, onExpire: () => console.warn('onExpire called') });
+
+        const reseTimer = () => {
+            const time = new Date();
+            time.setSeconds(time.getSeconds() + 59);
+            restart(time)
+        }
+        return (
+            <div style={{ textAlign: 'center' }}>
+
+                <div style={{ fontSize: '100px' }}>
+                    <span>{minutes}</span>:<span>{seconds}</span>
+                </div>
+
+                {isRunning ? <p>We are sending OTP to the provided number</p> :
+                    <>
+                        <p>Did'nt Recieved the OTP</p>
+                        <button
+                            onClick={() => {
+                                reseTimer();
+                                sendOtp();
+                            }} className='btn btn-outline-danger btn-sm'> 
+                            Resend
+                        </button>
+                    </>
+                }
+            </div>
+        );
+    }
+
+    const time = new Date();
+    time.setSeconds(time.getSeconds() + 59); // 10 minutes timer
 
     const submitData = () => {
         const userObj = {
@@ -81,6 +120,9 @@ const Register = ({ Code }) => {
         if (index === 1) {
             if (fname !== "" && lname !== "" && userName !== "" && email !== "") {
                 setIndex(index + 1);
+                // function for the random number generator
+                randomNum()
+
             } else {
                 toast.warning("Please fill all fields", { theme: "dark" });
                 setWstatus(true);
@@ -92,13 +134,15 @@ const Register = ({ Code }) => {
                 cnic !== ""
             ) {
                 setIndex(index + 1);
-                // function for the random number generator
-                randomNum()
+                sendOtp()
+
+                // randomNum()
             }
 
             else if (password !== cnfrmPassword) {
                 toast.warn('Password does not match', { theme: 'dark' })
             }
+
             else {
                 toast.warning("Please fill all fields", { theme: "dark" });
                 setPstatus(true);
@@ -107,7 +151,7 @@ const Register = ({ Code }) => {
 
             if (answer !== "") {
                 setIndex(index + 1);
-                sendOtp()
+                // sendOtp()
 
             } else {
                 toast.warning("Please fill all fields", { theme: "dark" });
@@ -118,6 +162,9 @@ const Register = ({ Code }) => {
             if (Number(otp) === Number(val)) {
                 submitData()
                 oncloseModal()
+            }
+            else if (!otp) {
+                toast.warn('Please enter a OTP', { theme: 'dark' })
             }
             else {
                 toast.warn("Please enter a valid OTP", { theme: 'dark' })
@@ -382,7 +429,6 @@ const Register = ({ Code }) => {
                                                 <span className="icon me-2">{passwordShown === false ? <i className="fa-solid fa-eye" onClick={togglePassword} /> : <i className="fa-solid fa-eye-slash" onClick={togglePassword} />} </span>
                                             </div>
 
-
                                         </div>
                                         <div className="form-label">
                                             <label htmlFor="exampleInputEmail1" className="form-label">
@@ -403,6 +449,8 @@ const Register = ({ Code }) => {
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
                                             />
+
+
                                         </div>
                                     </div>
                                 </>
@@ -484,6 +532,10 @@ const Register = ({ Code }) => {
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
                                             />
+
+                                            <MyTimer expiryTimestamp={time} />
+
+
                                         </div>
                                     </div>
                                 </>

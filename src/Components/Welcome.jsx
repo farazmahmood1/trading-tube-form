@@ -1,7 +1,7 @@
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 toast.configure();
