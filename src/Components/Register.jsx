@@ -32,44 +32,8 @@ const Register = ({ Code }) => {
     const [passwordShown, setPasswordShown] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
 
-    function MyTimer({ expiryTimestamp }) {
-        const {
-            seconds,
-            minutes,
-            isRunning,
-            restart,
-        } = useTimer({ expiryTimestamp, onExpire: () => console.warn('onExpire called') });
-
-        const reseTimer = () => {
-            const time = new Date();
-            time.setSeconds(time.getSeconds() + 59);
-            restart(time)
-        }
-        return (
-            <div style={{ textAlign: 'center' }}>
-
-                <div style={{ fontSize: '100px' }}>
-                    <span>{minutes}</span>:<span>{seconds}</span>
-                </div>
-
-                {isRunning ? <p>We are sending OTP to the provided number</p> :
-                    <>
-                        <p>Did'nt Recieved the OTP</p>
-                        <button
-                            onClick={() => {
-                                reseTimer();
-                                sendOtp();
-                            }} className='btn btn-outline-danger btn-sm'> 
-                            Resend
-                        </button>
-                    </>
-                }
-            </div>
-        );
-    }
-
     const time = new Date();
-    time.setSeconds(time.getSeconds() + 59); // 10 minutes timer
+    time.setSeconds(time.getSeconds() + 59);
 
     const submitData = () => {
         const userObj = {
@@ -90,22 +54,16 @@ const Register = ({ Code }) => {
         axios.post("https://apis.tradingtube.net/api/register", userObj)
             .then(res => {
                 toast.success("Resgistered Successfully", { theme: "dark" });
-                console.log(res)
             })
             .catch(err => {
-                console.log(err)
                 if (err.response.data.status === "401") {
                     toast.warn(err.response.data.message, { theme: "dark" });
-                    console.log(err)
                 }
                 else {
                     toast.warning(err.response.data.message, { theme: "dark" });
                 }
             });
     };
-
-
-
 
     function oncloseModal() {
         setShouldShow((prev) => !prev)
@@ -186,7 +144,6 @@ const Register = ({ Code }) => {
         fetch(`https://telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com/sms-verification-code?phoneNumber=${countryCode + phone}&verifyCode=${val}&appName=tradingtube`, options)
             .then(response => response.json())
             .then(response => {
-                console.log(response)
                 if (response.message === "Invalid phone number") {
                     toast.warn('Cant send OTP, please Enter a valid number', { theme: 'dark' })
                     setIndex(2)
@@ -194,10 +151,8 @@ const Register = ({ Code }) => {
             })
             .catch(err => {
                 toast.warn(`${err.message}`, { theme: 'dark' })
-                console.log(err)
             });
     }
-
 
     const togglePassword = () => {
         setPasswordShown(!passwordShown);
@@ -205,6 +160,42 @@ const Register = ({ Code }) => {
 
     const showConfirmPassword = () => {
         setShowPassword(!showPassword)
+    }
+
+    function MyTimer({ expiryTimestamp }) {
+        const {
+            seconds,
+            minutes,
+            isRunning,
+            restart,
+        } = useTimer({ expiryTimestamp, onExpire: () => console('Timer Started') });
+
+        const reseTimer = () => {
+            const time = new Date();
+            time.setSeconds(time.getSeconds() + 59);
+            restart(time)
+        }
+        return (
+            <div style={{ textAlign: 'center' }}>
+
+                <div style={{ fontSize: '100px' }}>
+                    <span>{minutes}</span>:<span>{seconds}</span>
+                </div>
+
+                {isRunning ? <p>We are sending OTP to the provided number</p> :
+                    <>
+                        <p>Did'nt Recieved the OTP</p>
+                        <button
+                            onClick={() => {
+                                reseTimer();
+                                sendOtp();
+                            }} className='btn btn-outline-danger btn-sm'> 
+                            Resend
+                        </button>
+                    </>
+                }
+            </div>
+        );
     }
 
     return (
