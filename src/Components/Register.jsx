@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import Congratulation from "./Congratulation";
 import CountryCode from './CountryCode'
@@ -32,6 +32,43 @@ const Register = ({ Code }) => {
     const [passwordShown, setPasswordShown] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
 
+    function MyTimer({ expiryTimestamp }) {
+        const {
+            seconds,
+            minutes,
+            isRunning,
+            restart,
+        } = useTimer({ expiryTimestamp, onExpire: () => console.log('Timer started') });
+
+        const reseTimer = () => {
+            const time = new Date();
+            time.setSeconds(time.getSeconds() + 59);
+            restart(time)
+        }
+        return (
+            <div style={{ textAlign: 'center' }}>
+
+                <div style={{ fontSize: '100px' }}>
+                    <span>{minutes}</span>:<span>{seconds}</span>
+                </div>
+
+                {isRunning ? <p>We are sending OTP to the provided number</p> :
+                    <>
+                        <p>Did'nt Recieved the OTP</p>
+
+                        <button
+                            onClick={() => {
+                                reseTimer();
+                                sendOtp();
+                            }} className='btn btn-outline-danger btn-sm'>
+                            Resend
+                        </button>
+                    </>
+                }
+            </div>
+        );
+    }
+
     const time = new Date();
     time.setSeconds(time.getSeconds() + 59);
 
@@ -54,6 +91,7 @@ const Register = ({ Code }) => {
         axios.post("https://apis.tradingtube.net/api/register", userObj)
             .then(res => {
                 toast.success("Resgistered Successfully", { theme: "dark" });
+                oncloseModal()
             })
             .catch(err => {
                 if (err.response.data.status === "401") {
@@ -93,7 +131,6 @@ const Register = ({ Code }) => {
             ) {
                 setIndex(index + 1);
                 sendOtp()
-
                 // randomNum()
             }
 
@@ -119,7 +156,7 @@ const Register = ({ Code }) => {
         else if (index === 4) {
             if (Number(otp) === Number(val)) {
                 submitData()
-                oncloseModal()
+
             }
             else if (!otp) {
                 toast.warn('Please enter a OTP', { theme: 'dark' })
@@ -162,42 +199,6 @@ const Register = ({ Code }) => {
         setShowPassword(!showPassword)
     }
 
-    function MyTimer({ expiryTimestamp }) {
-        const {
-            seconds,
-            minutes,
-            isRunning,
-            restart,
-        } = useTimer({ expiryTimestamp, onExpire: () => console('Timer Started') });
-
-        const reseTimer = () => {
-            const time = new Date();
-            time.setSeconds(time.getSeconds() + 59);
-            restart(time)
-        }
-        return (
-            <div style={{ textAlign: 'center' }}>
-
-                <div style={{ fontSize: '100px' }}>
-                    <span>{minutes}</span>:<span>{seconds}</span>
-                </div>
-
-                {isRunning ? <p>We are sending OTP to the provided number</p> :
-                    <>
-                        <p>Did'nt Recieved the OTP</p>
-                        <button
-                            onClick={() => {
-                                reseTimer();
-                                sendOtp();
-                            }} className='btn btn-outline-danger btn-sm'> 
-                            Resend
-                        </button>
-                    </>
-                }
-            </div>
-        );
-    }
-
     return (
         <div className="d-flex justify-content-center">
             <div className="col-md-6 text-white" style={{ marginTop: "3em" }}>
@@ -210,7 +211,6 @@ const Register = ({ Code }) => {
                                 <p className="me-3 ms-3">
                                     Please Enter the OTP that you have received on your phone number ,  if you do not received the OTP, you can try again later.
                                 </p>
-                                {/* <p>OTP code</p> */}
                             </div>
                         </>
                         :
@@ -441,7 +441,6 @@ const Register = ({ Code }) => {
                                                 aria-describedby="inputGroup-sizing-lg"
                                             />
 
-
                                         </div>
                                     </div>
                                 </>
@@ -525,7 +524,6 @@ const Register = ({ Code }) => {
                                             />
 
                                             <MyTimer expiryTimestamp={time} />
-
 
                                         </div>
                                     </div>

@@ -24,7 +24,6 @@ const Welcome = () => {
             }
             axios.post("https://apis.tradingtube.net/api/checkcode", RefObj)
                 .then((res) => {
-                    console.log(res)
                     if (res.data.status === "200") {
                         setLoader(false);
                         toast.info(`Referral ${res.data.message}`, { theme: "dark" });
@@ -44,7 +43,6 @@ const Welcome = () => {
 
                 })
                 .catch((error) => {
-                    console.log(error)
                     if (error.status === "400") {
                         setLoader(false);
                         toast.warning(`Referral code ${error.message}`, { theme: "dark" });
@@ -54,7 +52,6 @@ const Welcome = () => {
                 });
         };
     }
-
 
     function getReferal() {
         const url = `${window.location.href}`;
