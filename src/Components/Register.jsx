@@ -6,6 +6,11 @@ import Congratulation from "./Congratulation";
 import CountryCode from './CountryCode'
 import { useTimer } from 'react-timer-hook';
 
+import { EncryptStorage } from 'encrypt-storage';
+import { AsyncStorage } from 'AsyncStorage';
+
+
+
 const Register = ({ Code }) => {
 
     const [fname, setFname] = useState("");
@@ -16,7 +21,7 @@ const Register = ({ Code }) => {
     const [password, setPassword] = useState("");
     const [cnfrmPassword, setcnfrmPassword] = useState("");
     const [cnic, setCnic] = useState("");
-    const [question, setQuestion] = useState("What is your hobby?");
+    const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [otp, setOtp] = useState("");
 
@@ -31,6 +36,7 @@ const Register = ({ Code }) => {
 
     const [passwordShown, setPasswordShown] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
+    const [cnicField, setCnicField] = useState('')
 
     function MyTimer({ expiryTimestamp }) {
         const {
@@ -69,8 +75,41 @@ const Register = ({ Code }) => {
         );
     }
 
+    console.log(val)
+
     const time = new Date();
     time.setSeconds(time.getSeconds() + 59);
+
+    // const submitData = () => {
+    //     const userObj = {
+    //         email: email,
+    //         username: userName,
+    //         cnic: cnic,
+    //         phone: countryCode + phone,
+    //         password: password,
+    //         password_confirmation: cnfrmPassword,
+    //         code: Code,
+    //         firstname: fname,
+    //         lastname: lname,
+    //         question: question,
+    //         answer: answer,
+    //         role_id: "5",
+    //     };
+
+    //     axios.post("https://apis.tradingtube.net/api/register", userObj)
+    //         .then(res => {
+    //             toast.success("Resgistered Successfully", { theme: "dark" });
+    //             oncloseModal()
+    //         })
+    //         .catch(err => {
+    //             if (err.response.data.status === "401") {
+    //                 toast.warn(err.response.data.message, { theme: "dark" });
+    //             }
+    //             else {
+    //                 toast.warning(err.response.data.message, { theme: "dark" });
+    //             }
+    //         });
+    // };
 
     const submitData = () => {
         const userObj = {
@@ -88,12 +127,24 @@ const Register = ({ Code }) => {
             role_id: "5",
         };
 
-        axios.post("https://apis.tradingtube.net/api/register", userObj)
+        axios.post(`${process.env.REACT_APP_BASE_URL}register`, userObj)
             .then(res => {
+                console.log(res)
+                const encryptStorage = new EncryptStorage('secret-key', {
+                    prefix: '@instance1',
+                });
+                const encryptStorageTwo = new EncryptStorage('secret-key', {
+                    prefix: '@instance2'
+                });
+
+                encryptStorage.setItem('unique_key', res.data.token);
+                encryptStorageTwo.setItem('userID', (res.data.user.username));
+
                 toast.success("Resgistered Successfully", { theme: "dark" });
                 oncloseModal()
             })
             .catch(err => {
+                console.log(err)
                 if (err.response.data.status === "401") {
                     toast.warn(err.response.data.message, { theme: "dark" });
                 }
@@ -103,6 +154,7 @@ const Register = ({ Code }) => {
             });
     };
 
+
     function oncloseModal() {
         setShouldShow((prev) => !prev)
     }
@@ -111,6 +163,7 @@ const Register = ({ Code }) => {
         var randomVal = Math.floor(1000 + Math.random() * 9000);
         setVal(randomVal)
     }
+
 
     const onNext = () => {
         if (index === 1) {
@@ -126,8 +179,8 @@ const Register = ({ Code }) => {
         } else if (index === 2) {
             if (
                 phone !== "" &&
-                password === cnfrmPassword &&
-                cnic !== ""
+                password === cnfrmPassword && cnic !== "" &&
+                cnic.length === 13
             ) {
                 setIndex(index + 1);
                 sendOtp()
@@ -137,10 +190,16 @@ const Register = ({ Code }) => {
             else if (password !== cnfrmPassword) {
                 toast.warn('Password does not match', { theme: 'dark' })
             }
-
+            else if (cnic) {
+                if (cnic.length < 13 || cnic.length > 13) {
+                    toast.warn('Please Enter a valid CNIC', {theme:'dark'})
+                    setCnicField(true)
+                }
+            }
             else {
                 toast.warning("Please fill all fields", { theme: "dark" });
                 setPstatus(true);
+                setCnicField(true)
             }
         } else if (index === 3) {
 
@@ -430,16 +489,19 @@ const Register = ({ Code }) => {
                                                 className="form-control" defaultValue={cnic}
                                                 onChange={(e) => setCnic(e.target.value)}
                                                 placeholder="Type your CNIC without dashes"
+
                                                 style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
                                                     borderRadius: "10PX",
                                                     borderColor:
-                                                        pstatus === true && cnic === "" ? "red" : "#CEB775",
+                                                        pstatus === true && cnic === "" ? "red" : "#CEB775"
                                                 }}
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
                                             />
+                                            {/* {fielderrorstatus()}
+                                            {cnic.length < 13 || cnic.length > 13 && pstatus === true ? <p className="form-text text-danger">Please Enter a valid CNIC</p> : null} */}
 
                                         </div>
                                     </div>
@@ -466,14 +528,24 @@ const Register = ({ Code }) => {
                                                     borderRadius: "10PX",
                                                 }}
                                             >
-                                                <option value="What is your hobby?">What is your hobby?</option>
+
+                                                <option selected disabled>Select Questions</option>
+                                                <option >What is your hobby?</option>
+                                                <option >What is your best friend name?</option>
+                                                <option >What is your father name?</option>
+                                                <option >What is your school name?</option>
+
+
+
+                                                {/* <option value="What is your hobby?">What is your hobby?</option>
                                                 <option value="What is your pet name?">What is your pet name?</option>
                                                 <option value=" What is your best friend name?">
                                                     What is your best friend name?
                                                 </option>
-                                                <option value="What is your father name?">What is your father name?</option>
-                                                <option value=">What is your school name?">What is your school name?</option>
+                                                <option value="What is your father name?">What is your father naSme?</option>
+                                                <option value=">What is your school name?">What is your school name?</option> */}
                                             </select>
+                                            <p className="form-text" style={{ fontSize: "12px" }}>These Questions will help you in case you forgot your password</p>
                                         </div>
                                         <div className="form-label">
                                             <label htmlFor="exampleInputEmail1" className="form-label">
