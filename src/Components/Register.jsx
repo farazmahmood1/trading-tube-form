@@ -36,7 +36,7 @@ const Register = ({ Code }) => {
 
     const [passwordShown, setPasswordShown] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
-    const [cnicField, setCnicField] = useState('')
+    const [cnicField, setCnicField] = useState(false)
 
     function MyTimer({ expiryTimestamp }) {
         const {
@@ -74,8 +74,6 @@ const Register = ({ Code }) => {
             </div>
         );
     }
-
-    console.log(val)
 
     const time = new Date();
     time.setSeconds(time.getSeconds() + 59);
@@ -129,7 +127,6 @@ const Register = ({ Code }) => {
 
         axios.post(`${process.env.REACT_APP_BASE_URL}register`, userObj)
             .then(res => {
-                console.log(res)
                 const encryptStorage = new EncryptStorage('secret-key', {
                     prefix: '@instance1',
                 });
@@ -144,7 +141,6 @@ const Register = ({ Code }) => {
                 oncloseModal()
             })
             .catch(err => {
-                console.log(err)
                 if (err.response.data.status === "401") {
                     toast.warn(err.response.data.message, { theme: "dark" });
                 }
@@ -154,7 +150,6 @@ const Register = ({ Code }) => {
             });
     };
 
-
     function oncloseModal() {
         setShouldShow((prev) => !prev)
     }
@@ -163,7 +158,6 @@ const Register = ({ Code }) => {
         var randomVal = Math.floor(1000 + Math.random() * 9000);
         setVal(randomVal)
     }
-
 
     const onNext = () => {
         if (index === 1) {
@@ -190,19 +184,21 @@ const Register = ({ Code }) => {
             else if (password !== cnfrmPassword) {
                 toast.warn('Password does not match', { theme: 'dark' })
             }
-            else if (cnic) {
+            else if (!cnicField) {
                 if (cnic.length < 13 || cnic.length > 13) {
-                    toast.warn('Please Enter a valid CNIC', {theme:'dark'})
+                    toast.warn('Please Enter a valid CNIC', { theme: 'dark' })
                     setCnicField(true)
+                }
+                else if (cnic.length === 13) {
+                    setCnicField(false)
                 }
             }
             else {
                 toast.warning("Please fill all fields", { theme: "dark" });
                 setPstatus(true);
-                setCnicField(true)
+                // setCnicField(true)
             }
         } else if (index === 3) {
-
             if (answer !== "") {
                 setIndex(index + 1);
                 // sendOtp()
@@ -489,7 +485,8 @@ const Register = ({ Code }) => {
                                                 className="form-control" defaultValue={cnic}
                                                 onChange={(e) => setCnic(e.target.value)}
                                                 placeholder="Type your CNIC without dashes"
-
+                                                required
+       max={11}
                                                 style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
@@ -500,8 +497,8 @@ const Register = ({ Code }) => {
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
                                             />
-                                            {/* {fielderrorstatus()}
-                                            {cnic.length < 13 || cnic.length > 13 && pstatus === true ? <p className="form-text text-danger">Please Enter a valid CNIC</p> : null} */}
+                                            {/* {fielderrorstatus()} */}
+                                            {cnicField === true ? <p className="form-text text-danger">Your CNIC should only be 13 digits</p> : null}
 
                                         </div>
                                     </div>
@@ -529,7 +526,7 @@ const Register = ({ Code }) => {
                                                 }}
                                             >
 
-                                                <option selected disabled>Select Questions</option>
+                                                <option >Select Questions</option>
                                                 <option >What is your hobby?</option>
                                                 <option >What is your best friend name?</option>
                                                 <option >What is your father name?</option>
