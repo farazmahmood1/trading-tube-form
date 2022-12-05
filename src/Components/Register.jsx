@@ -21,7 +21,7 @@ const Register = ({ Code }) => {
     const [password, setPassword] = useState("");
     const [cnfrmPassword, setcnfrmPassword] = useState("");
     const [cnic, setCnic] = useState("");
-    const [question, setQuestion] = useState("");
+    const [question, setQuestion] = useState("Select Questions");
     const [answer, setAnswer] = useState("");
     const [otp, setOtp] = useState("");
 
@@ -159,6 +159,7 @@ const Register = ({ Code }) => {
         setVal(randomVal)
     }
 
+
     const onNext = () => {
         if (index === 1) {
             if (fname !== "" && lname !== "" && userName !== "" && email !== "") {
@@ -178,6 +179,8 @@ const Register = ({ Code }) => {
             ) {
                 setIndex(index + 1);
                 sendOtp()
+                setCnicField(false)
+
                 // randomNum()
             }
 
@@ -200,7 +203,13 @@ const Register = ({ Code }) => {
             }
         } else if (index === 3) {
             if (answer !== "") {
-                setIndex(index + 1);
+                if (question == "Select Questions") {
+                    toast.warn('Please Select any question', {theme:'dark'})
+                }
+                else {
+
+                    setIndex(index + 1);
+                }
                 // sendOtp()
 
             } else {
@@ -486,7 +495,6 @@ const Register = ({ Code }) => {
                                                 onChange={(e) => setCnic(e.target.value)}
                                                 placeholder="Type your CNIC without dashes"
                                                 required
-       max={11}
                                                 style={{
                                                     backgroundColor: "#171717",
                                                     color: "#F6F6F6",
@@ -517,6 +525,8 @@ const Register = ({ Code }) => {
                                             <select
                                                 className="form-select" defaultValue={answer}
                                                 onChange={(e) => setQuestion(e.target.value)}
+
+
                                                 aria-label="Default select example"
                                                 style={{
                                                     backgroundColor: "#171717",
@@ -526,21 +536,23 @@ const Register = ({ Code }) => {
                                                 }}
                                             >
 
-                                                <option >Select Questions</option>
+                                                <option  >Select Questions</option>
                                                 <option >What is your hobby?</option>
                                                 <option >What is your best friend name?</option>
                                                 <option >What is your father name?</option>
                                                 <option >What is your school name?</option>
 
 
-
-                                                {/* <option value="What is your hobby?">What is your hobby?</option>
+                                                {/* <option value="Select Questions">Select Questions</option>
+                                                <option value="What is your hobby?">What is your hobby?</option>
                                                 <option value="What is your pet name?">What is your pet name?</option>
                                                 <option value=" What is your best friend name?">
                                                     What is your best friend name?
                                                 </option>
                                                 <option value="What is your father name?">What is your father naSme?</option>
                                                 <option value=">What is your school name?">What is your school name?</option> */}
+
+
                                             </select>
                                             <p className="form-text" style={{ fontSize: "12px" }}>These Questions will help you in case you forgot your password</p>
                                         </div>
@@ -565,6 +577,7 @@ const Register = ({ Code }) => {
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
                                             />
+
                                         </div>
                                     </div>
                                 </>
