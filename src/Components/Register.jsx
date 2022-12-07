@@ -5,11 +5,7 @@ import { toast } from "react-toastify";
 import Congratulation from "./Congratulation";
 import CountryCode from './CountryCode'
 import { useTimer } from 'react-timer-hook';
-
 import { EncryptStorage } from 'encrypt-storage';
-import { AsyncStorage } from 'AsyncStorage';
-
-
 
 const Register = ({ Code }) => {
 
@@ -44,7 +40,7 @@ const Register = ({ Code }) => {
             minutes,
             isRunning,
             restart,
-        } = useTimer({ expiryTimestamp, onExpire: () => console.log('Timer started') });
+        } = useTimer({ expiryTimestamp, onExpire: () => { return null } });
 
         const reseTimer = () => {
             const time = new Date();
@@ -60,7 +56,7 @@ const Register = ({ Code }) => {
 
                 {isRunning ? <p>We are sending OTP to the provided number</p> :
                     <>
-                        <p>Did'nt Recieved the OTP</p>
+                        <p>Didn't Recieved the OTP</p>
 
                         <button
                             onClick={() => {
@@ -159,7 +155,6 @@ const Register = ({ Code }) => {
         setVal(randomVal)
     }
 
-
     const onNext = () => {
         if (index === 1) {
             if (fname !== "" && lname !== "" && userName !== "" && email !== "") {
@@ -180,10 +175,7 @@ const Register = ({ Code }) => {
                 setIndex(index + 1);
                 sendOtp()
                 setCnicField(false)
-
-                // randomNum()
             }
-
             else if (password !== cnfrmPassword) {
                 toast.warn('Password does not match', { theme: 'dark' })
             }
@@ -203,8 +195,8 @@ const Register = ({ Code }) => {
             }
         } else if (index === 3) {
             if (answer !== "") {
-                if (question == "Select Questions") {
-                    toast.warn('Please Select any question', {theme:'dark'})
+                if (question === "Select Questions") {
+                    toast.warn('Please Select any question', { theme: 'dark' })
                 }
                 else {
 
@@ -381,6 +373,7 @@ const Register = ({ Code }) => {
                                                 }}
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -536,7 +529,7 @@ const Register = ({ Code }) => {
                                                 }}
                                             >
 
-                                                <option  >Select Questions</option>
+                                                <option>Select Questions</option>
                                                 <option >What is your hobby?</option>
                                                 <option >What is your best friend name?</option>
                                                 <option >What is your father name?</option>
