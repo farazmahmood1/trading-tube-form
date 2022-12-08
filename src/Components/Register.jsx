@@ -103,7 +103,6 @@ const Register = ({ Code }) => {
                 {isRunning ? <p>We are sending OTP to the provided number</p> :
                     <>
                         <p>Didn't Recieved the OTP</p>
-
                         <button
                             onClick={() => {
                                 reseTimer();
@@ -126,7 +125,6 @@ const Register = ({ Code }) => {
             username: userName,
             cnic: cnic,
             phone: countryCode + phone,
-
         };
 
         axios.post(`${process.env.REACT_APP_BASE_URL}check_register`, userObj)
@@ -145,8 +143,6 @@ const Register = ({ Code }) => {
                 }
             });
     }
-
-
 
     // const submitData = () => {
     //     const userObj = {
@@ -223,7 +219,6 @@ const Register = ({ Code }) => {
     function oncloseModal() {
         setShouldShow((prev) => !prev)
     }
-
 
     const onNext = () => {
         if (index === 1) {
@@ -317,7 +312,6 @@ const Register = ({ Code }) => {
     const showConfirmPassword = () => {
         setShowPassword(!showPassword)
     }
-
 
 
     return (
@@ -581,8 +575,9 @@ const Register = ({ Code }) => {
                                                 Questions
                                             </label>
                                             <select
-                                                className="form-select" defaultValue={answer}
+                                                className="form-select" defaultValue={question}
                                                 onChange={(e) => setQuestion(e.target.value)}
+
 
 
                                                 aria-label="Default select example"
@@ -592,8 +587,9 @@ const Register = ({ Code }) => {
                                                     borderColor: "#CEB775",
                                                     borderRadius: "10PX",
                                                 }}
+                                            
                                             >
-
+                                                
                                                 <option>Select Questions</option>
                                                 <option >What is your hobby?</option>
                                                 <option >What is your best friend name?</option>
