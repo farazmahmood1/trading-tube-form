@@ -7,6 +7,9 @@ import CountryCode from './CountryCode'
 import { useTimer } from 'react-timer-hook';
 import { EncryptStorage } from 'encrypt-storage';
 
+import authentication from "../firebaseConfig";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+
 const Register = ({ Code }) => {
 
     const [fname, setFname] = useState("");
@@ -33,6 +36,49 @@ const Register = ({ Code }) => {
     const [passwordShown, setPasswordShown] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
     const [cnicField, setCnicField] = useState(false)
+
+    const [confirm, setConfirm] = useState(null)
+
+    const [loading, setLoading] = useState('')
+
+
+    const geneRecaptcha = () => {
+        window.recaptchaVerifier = new RecaptchaVerifier(
+            "recaptcha-container",
+            {
+                size: "invisible",
+                callback: (response) => {
+                },
+            },
+            authentication
+        );
+    };
+
+    const requestOTP = () => {
+        geneRecaptcha();
+        let appVerifier = window.recaptchaVerifier;
+        signInWithPhoneNumber(authentication, `+${countryCode}${phone}`, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                setConfirm(confirmationResult)
+            })
+            .catch((error) => {
+                toast.warn("Session Expired! please re click on the Refer code URL sent by your friend!", { theme: "dark" })
+                console.log(error);
+            });
+    };
+
+
+    async function confirmCode() {
+        setLoading(true)
+        try {
+            await confirm.confirm(otp);
+            submitData()
+        } catch (error) {
+            setLoading(false)
+            toast.warn("OTP, DOES NOT MATCH OR EXPIRED!", { theme: "dark" })
+        }
+    }
 
     function MyTimer({ expiryTimestamp }) {
         const {
@@ -61,7 +107,7 @@ const Register = ({ Code }) => {
                         <button
                             onClick={() => {
                                 reseTimer();
-                                sendOtp();
+                                requestOTP()
                             }} className='btn btn-outline-danger btn-sm'>
                             Resend
                         </button>
@@ -73,6 +119,34 @@ const Register = ({ Code }) => {
 
     const time = new Date();
     time.setSeconds(time.getSeconds() + 59);
+
+    const checkRegisters = () => {
+        const userObj = {
+            email: email,
+            username: userName,
+            cnic: cnic,
+            phone: countryCode + phone,
+
+        };
+
+        axios.post(`${process.env.REACT_APP_BASE_URL}check_register`, userObj)
+            .then(res => {
+                if (res.data.status === "200") {
+                    setIndex(index + 1);
+                    requestOTP()
+                }
+            })
+            .catch(err => {
+                if (err.response.data.status === "401") {
+                    toast.warn(err.response.data.message, { theme: "dark" });
+                }
+                else {
+                    toast.warning(err.response.data.message, { theme: "dark" });
+                }
+            });
+    }
+
+
 
     // const submitData = () => {
     //     const userObj = {
@@ -113,7 +187,7 @@ const Register = ({ Code }) => {
             phone: countryCode + phone,
             password: password,
             password_confirmation: cnfrmPassword,
-            code: Code,
+            code: Code === undefined ? "PHRNEL" : Code,
             firstname: fname,
             lastname: lname,
             question: question,
@@ -150,18 +224,11 @@ const Register = ({ Code }) => {
         setShouldShow((prev) => !prev)
     }
 
-    const randomNum = () => {
-        var randomVal = Math.floor(1000 + Math.random() * 9000);
-        setVal(randomVal)
-    }
 
     const onNext = () => {
         if (index === 1) {
             if (fname !== "" && lname !== "" && userName !== "" && email !== "") {
                 setIndex(index + 1);
-                // function for the random number generator
-                randomNum()
-
             } else {
                 toast.warning("Please fill all fields", { theme: "dark" });
                 setWstatus(true);
@@ -173,7 +240,7 @@ const Register = ({ Code }) => {
                 cnic.length === 13
             ) {
                 setIndex(index + 1);
-                sendOtp()
+                // requestOTP()
                 setCnicField(false)
             }
             else if (password !== cnfrmPassword) {
@@ -200,9 +267,8 @@ const Register = ({ Code }) => {
                 }
                 else {
 
-                    setIndex(index + 1);
+                    checkRegisters()
                 }
-                // sendOtp()
 
             } else {
                 toast.warning("Please fill all fields", { theme: "dark" });
@@ -210,15 +276,12 @@ const Register = ({ Code }) => {
             }
         }
         else if (index === 4) {
-            if (Number(otp) === Number(val)) {
-                submitData()
-
-            }
-            else if (!otp) {
+            if (!otp) {
                 toast.warn('Please enter a OTP', { theme: 'dark' })
             }
             else {
-                toast.warn("Please enter a valid OTP", { theme: 'dark' })
+                confirmCode()
+
             }
         }
         else {
@@ -226,26 +289,26 @@ const Register = ({ Code }) => {
         }
     };
 
-    const sendOtp = () => {
-        const options = {
-            method: 'POST',
-            headers: {
-                'X-RapidAPI-Key': 'be434c3026msh50dc650f31b5e59p1380e1jsn8889f821e46d',
-                'X-RapidAPI-Host': 'telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com'
-            }
-        };
-        fetch(`https://telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com/sms-verification-code?phoneNumber=${countryCode + phone}&verifyCode=${val}&appName=tradingtube`, options)
-            .then(response => response.json())
-            .then(response => {
-                if (response.message === "Invalid phone number") {
-                    toast.warn('Cant send OTP, please Enter a valid number', { theme: 'dark' })
-                    setIndex(2)
-                }
-            })
-            .catch(err => {
-                toast.warn(`${err.message}`, { theme: 'dark' })
-            });
-    }
+    // const sendOtp = () => {
+    //     const options = {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-RapidAPI-Key': 'be434c3026msh50dc650f31b5e59p1380e1jsn8889f821e46d',
+    //             'X-RapidAPI-Host': 'telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com'
+    //         }
+    //     };
+    //     fetch(`https://telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com/sms-verification-code?phoneNumber=${countryCode + phone}&verifyCode=${val}&appName=tradingtube`, options)
+    //         .then(response => response.json())
+    //         .then(response => {
+    //             if (response.message === "Invalid phone number") {
+    //                 toast.warn('Cant send OTP, please Enter a valid number', { theme: 'dark' })
+    //                 setIndex(2)
+    //             }
+    //         })
+    //         .catch(err => {
+    //             toast.warn(`${err.message}`, { theme: 'dark' })
+    //         });
+    // }
 
     const togglePassword = () => {
         setPasswordShown(!passwordShown);
@@ -254,6 +317,8 @@ const Register = ({ Code }) => {
     const showConfirmPassword = () => {
         setShowPassword(!showPassword)
     }
+
+
 
     return (
         <div className="d-flex justify-content-center">
@@ -629,7 +694,7 @@ const Register = ({ Code }) => {
                     >
                         Continue <i className="fa-solid fa-chevron-right" />{" "}
                     </button>
-
+                    <div id="recaptcha-container"></div>
                 </div>
             </div>
             {< Congratulation shouldShow={shouldShow} />}

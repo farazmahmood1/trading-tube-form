@@ -672,7 +672,7 @@ const countries = [
     name: "Oman",
   },
   {
-    code: "92",
+    code: "+92",
     name: "Pakistan",
   },
   {
