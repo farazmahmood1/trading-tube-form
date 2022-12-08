@@ -182,8 +182,9 @@ const Register = ({ Code }) => {
                 callback: (response) => {
                 },
             },
-            authentication().settings.isAppVerificationDisabledForTesting = true
-            // 
+            authentication.settings.appVerificationDisabledForTesting = true
+            // ().settings.isAppVerificationDisabledForTesting = true
+            // ().settings.appVerificationDisabledForTesting = true
         );
     };
 
@@ -275,12 +276,12 @@ const Register = ({ Code }) => {
             .catch(err => {
                 setLoader(false)
                 console.log(err)
-                if (err.response.status === "401") {
-                    toast.warn(err.response.data.message, { theme: "dark" });
-                }
-                else {
-                    toast.warn(err.response.data.message, { theme: "dark" });
-                }
+                // if (err.response.status === "401") {
+                //     toast.warn(err.response.data.message, { theme: "dark" });
+                // }
+                // else {
+                //     toast.warn(err.response.data.message, { theme: "dark" });
+                // }
             });
     }
 
@@ -433,6 +434,8 @@ const Register = ({ Code }) => {
             )
         }
     }
+
+
 
     return (
         <div className="d-flex justify-content-center">
@@ -684,7 +687,7 @@ const Register = ({ Code }) => {
                                         <input
 
                                             maxLength="13"
-                                            type="number"
+                                            type="text"
                                             className="form-control" defaultValue={cnic}
                                             onChange={(e) => setCnic(e.target.value)}
                                             placeholder="Type your CNIC without dashes"
