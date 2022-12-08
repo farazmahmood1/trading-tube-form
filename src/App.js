@@ -21,8 +21,8 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<Welcome />} />
-          <Route path="/Register" element={<Register Code={code} />} />
+          {/* <Route path="/" element={<Welcome />} /> */}
+          <Route path="/" element={<Register Code={code} />} />
         </Routes>
       </Router>
     </div>
