@@ -6,10 +6,10 @@ import Congratulation from "./Congratulation";
 import CountryCode from './CountryCode'
 import { useTimer } from 'react-timer-hook';
 import { EncryptStorage } from 'encrypt-storage';
-
 import authentication from "../firebaseConfig";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { FirebaseAppSettings } from "firebase/app";
 
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
 const Register = ({ Code }) => {
 
 
@@ -174,31 +174,30 @@ const Register = ({ Code }) => {
     };
 
 
-    const geneRecaptcha = () => {
-        window.recaptchaVerifier = new RecaptchaVerifier(
-            "recaptcha-container",
-            {
-                size: "invisible",
-                callback: (response) => {
-                },
+  
+    const requestOTP = async () => {
+        const auth = getAuth();
+        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response) => {
+              // reCAPTCHA solved, allow signInWithPhoneNumber.
+              // ...
             },
-            authentication.settings.appVerificationDisabledForTesting = true
-            // ().settings.isAppVerificationDisabledForTesting = true
-            // ().settings.appVerificationDisabledForTesting = true
-        );
-    };
-
-    const requestOTP = () => {
-        geneRecaptcha();
-        let appVerifier = window.recaptchaVerifier;
-        signInWithPhoneNumber(authentication, `+${countryCode}${phone}`, appVerifier)
+            'expired-callback': () => {
+              // Response expired. Ask user to solve reCAPTCHA again.
+              // ...
+            }
+          }, auth);
+        const appVerifier = window.recaptchaVerifier;
+     
+       
+        signInWithPhoneNumber(auth, `+${countryCode}${phone}`, appVerifier)
             .then((confirmationResult) => {
                 window.confirmationResult = confirmationResult;
                 setConfirm(confirmationResult)
-                console.log(window.confirmationResult)
             })
             .catch((error) => {
-                toast.warn("Session Expired! please re-click on the Refer code URL sent by your friend!", { theme: "dark" })
+                toast.warn("Something suspecious, please close and Re-Open the Registration Page.", { theme: "dark" })
                 console.log(error);
             });
     };
@@ -276,7 +275,7 @@ const Register = ({ Code }) => {
             .catch(err => {
                 setLoader(false)
                 console.log(err)
-                // if (err.response.status === "401") {
+                // if (err.response.status === 401) {
                 //     toast.warn(err.response.data.message, { theme: "dark" });
                 // }
                 // else {
