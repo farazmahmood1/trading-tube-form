@@ -9,7 +9,7 @@ import { EncryptStorage } from 'encrypt-storage';
 import authentication from "../firebaseConfig";
 import { FirebaseAppSettings } from "firebase/app";
 
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 const Register = ({ Code }) => {
 
 
@@ -21,6 +21,7 @@ const Register = ({ Code }) => {
     // modal & indexes
     const [shouldShow, setShouldShow] = useState(false)
     const [index, setIndex] = useState(0);
+    const [loading, setLoading] = useState(false)
 
     // Summit Data
     const [fname, setFname] = useState("");
@@ -48,56 +49,6 @@ const Register = ({ Code }) => {
 
     // confirm otp
     const [confirm, setConfirm] = useState(null)
-
-
-
-    const [loading, setLoading] = useState(false)
-
-    function getReferal() {
-        const url = `${window.location.href}`;
-        const part = url.split("?");
-        const path = part[1];
-        setCode(path)
-    }
-
-    useEffect(() => {
-        getReferal()
-    }, [])
-
-    const sendCode = () => {
-        setLoader(true);
-        const RefObj = {
-            referal_code: code
-        }
-        axios.post("https://apis.tradingtube.net/api/checkcode", RefObj)
-            .then((res) => {
-                if (res.data.status === "200") {
-                    setLoader(false);
-                    toast.info(`Referral ${res.data.message}`, { theme: "dark" });
-                    // setInterval(() => {
-                    setIndex(index + 1)
-                    // }, 1000);
-                }
-                else if (code === undefined) {
-                    toast.warning(`Please enter valid referral code`, { theme: "dark" });
-                    setLoader(false);
-                }
-                else {
-                    setError(res.data.status);
-                    toast.warning(`Referral code ${res.data.message}`, { theme: "dark" });
-                    setLoader(false);
-                }
-
-            })
-            .catch((error) => {
-                if (error.status === "400") {
-                    setLoader(false);
-                    toast.warning(`Referral code ${error.message}`, { theme: "dark" });
-                } else {
-                    toast.warning("Something went wrong", { theme: "dark" });
-                }
-            });
-    }
 
     const onNext = () => {
         if (index === 0) {
@@ -150,7 +101,6 @@ const Register = ({ Code }) => {
                     toast.warn('Please Select any question', { theme: 'dark' })
                 }
                 else {
-
                     checkRegisters()
                 }
 
@@ -165,7 +115,6 @@ const Register = ({ Code }) => {
             }
             else {
                 confirmCode()
-
             }
         }
         else {
@@ -173,24 +122,103 @@ const Register = ({ Code }) => {
         }
     };
 
+    const submitData = () => {
+        setLoader(true)
 
-  
+        const userObj = {
+            email: email,
+            username: userName,
+            cnic: cnic,
+            phone: countryCode + phone,
+            password: password,
+            password_confirmation: cnfrmPassword,
+            code: Code === undefined ? "PHRNEL" : Code,
+            firstname: fname,
+            lastname: lname,
+            question: question,
+            answer: answer,
+            role_id: "5",
+        };
+
+        axios.post(`${process.env.REACT_APP_BASE_URL}register`, userObj)
+            .then(res => {
+                const encryptStorage = new EncryptStorage('secret-key', {
+                    prefix: '@instance1',
+                });
+                const encryptStorageTwo = new EncryptStorage('secret-key', {
+                    prefix: '@instance2'
+                });
+
+                encryptStorage.setItem('unique_key', res.data.token);
+                encryptStorageTwo.setItem('userID', (res.data.user.username));
+
+                toast.success("Resgistered Successfully", { theme: "dark" });
+                setLoader(false)
+
+                oncloseModal()
+            })
+            .catch(err => {
+                setLoader(false)
+                if (err.response.data.status === "401") {
+                    toast.warn(err.response.data.message, { theme: "dark" });
+                }
+                else {
+                    toast.warning(err.response.data.message, { theme: "dark" });
+                }
+            });
+    };
+
+    const sendCode = () => {
+        setLoader(true);
+        const RefObj = {
+            referal_code: code
+        }
+        axios.post("https://apis.tradingtube.net/api/checkcode", RefObj)
+            .then((res) => {
+                if (res.data.status === "200") {
+                    setLoader(false);
+                    toast.info(`Referral ${res.data.message}`, { theme: "dark" });
+                    // setInterval(() => {
+                    setIndex(index + 1)
+                    // }, 1000);
+                }
+                else if (code === undefined) {
+                    toast.warning(`Please enter valid referral code`, { theme: "dark" });
+                    setLoader(false);
+                }
+                else {
+                    setError(res.data.status);
+                    toast.warning(`Referral code ${res.data.message}`, { theme: "dark" });
+                    setLoader(false);
+                }
+
+            })
+            .catch((error) => {
+                if (error.status === "400") {
+                    setLoader(false);
+                    toast.warning(`Referral code ${error.message}`, { theme: "dark" });
+                } else {
+                    toast.warning("Something went wrong", { theme: "dark" });
+                }
+            });
+    }
+
     const requestOTP = async () => {
         const auth = getAuth();
         window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
             'size': 'invisible',
             'callback': (response) => {
-              // reCAPTCHA solved, allow signInWithPhoneNumber.
-              // ...
+                // reCAPTCHA solved, allow signInWithPhoneNumber.
+                // ...
             },
             'expired-callback': () => {
-              // Response expired. Ask user to solve reCAPTCHA again.
-              // ...
+                // Response expired. Ask user to solve reCAPTCHA again.
+                // ...
             }
-          }, auth);
+        }, auth);
         const appVerifier = window.recaptchaVerifier;
-     
-       
+
+
         signInWithPhoneNumber(auth, `+${countryCode}${phone}`, appVerifier)
             .then((confirmationResult) => {
                 window.confirmationResult = confirmationResult;
@@ -275,116 +303,18 @@ const Register = ({ Code }) => {
             .catch(err => {
                 setLoader(false)
                 console.log(err)
-                // if (err.response.status === 401) {
-                //     toast.warn(err.response.data.message, { theme: "dark" });
-                // }
-                // else {
-                //     toast.warn(err.response.data.message, { theme: "dark" });
-                // }
-            });
-    }
-
-    // const submitData = () => {
-    //     const userObj = {
-    //         email: email,
-    //         username: userName,
-    //         cnic: cnic,
-    //         phone: countryCode + phone,
-    //         password: password,
-    //         password_confirmation: cnfrmPassword,
-    //         code: Code,
-    //         firstname: fname,
-    //         lastname: lname,
-    //         question: question,
-    //         answer: answer,
-    //         role_id: "5",
-    //     };
-
-    //     axios.post("https://apis.tradingtube.net/api/register", userObj)
-    //         .then(res => {
-    //             toast.success("Resgistered Successfully", { theme: "dark" });
-    //             oncloseModal()
-    //         })
-    //         .catch(err => {
-    //             if (err.response.data.status === "401") {
-    //                 toast.warn(err.response.data.message, { theme: "dark" });
-    //             }
-    //             else {
-    //                 toast.warning(err.response.data.message, { theme: "dark" });
-    //             }
-    //         });
-    // };
-
-    const submitData = () => {
-        setLoader(true)
-
-        const userObj = {
-            email: email,
-            username: userName,
-            cnic: cnic,
-            phone: countryCode + phone,
-            password: password,
-            password_confirmation: cnfrmPassword,
-            code: Code === undefined ? "PHRNEL" : Code,
-            firstname: fname,
-            lastname: lname,
-            question: question,
-            answer: answer,
-            role_id: "5",
-        };
-
-        axios.post(`${process.env.REACT_APP_BASE_URL}register`, userObj)
-            .then(res => {
-                const encryptStorage = new EncryptStorage('secret-key', {
-                    prefix: '@instance1',
-                });
-                const encryptStorageTwo = new EncryptStorage('secret-key', {
-                    prefix: '@instance2'
-                });
-
-                encryptStorage.setItem('unique_key', res.data.token);
-                encryptStorageTwo.setItem('userID', (res.data.user.username));
-
-                toast.success("Resgistered Successfully", { theme: "dark" });
-                setLoader(false)
-
-                oncloseModal()
-            })
-            .catch(err => {
-                setLoader(false)
-                if (err.response.data.status === "401") {
+                if (err.response.status === 401) {
                     toast.warn(err.response.data.message, { theme: "dark" });
                 }
                 else {
-                    toast.warning(err.response.data.message, { theme: "dark" });
+                    toast.warn(err.response.data.message, { theme: "dark" });
                 }
             });
-    };
+    }
 
     function oncloseModal() {
         setShouldShow((prev) => !prev)
     }
-
-    // const sendOtp = () => {
-    //     const options = {
-    //         method: 'POST',
-    //         headers: {
-    //             'X-RapidAPI-Key': 'be434c3026msh50dc650f31b5e59p1380e1jsn8889f821e46d',
-    //             'X-RapidAPI-Host': 'telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com'
-    //         }
-    //     };
-    //     fetch(`https://telesign-telesign-send-sms-verification-code-v1.p.rapidapi.com/sms-verification-code?phoneNumber=${countryCode + phone}&verifyCode=${val}&appName=tradingtube`, options)
-    //         .then(response => response.json())
-    //         .then(response => {
-    //             if (response.message === "Invalid phone number") {
-    //                 toast.warn('Cant send OTP, please Enter a valid number', { theme: 'dark' })
-    //                 setIndex(2)
-    //             }
-    //         })
-    //         .catch(err => {
-    //             toast.warn(`${err.message}`, { theme: 'dark' })
-    //         });
-    // }
 
     const togglePassword = () => {
         setPasswordShown(!passwordShown);
@@ -434,7 +364,16 @@ const Register = ({ Code }) => {
         }
     }
 
+    function getReferal() {
+        const url = `${window.location.href}`;
+        const part = url.split("?");
+        const path = part[1];
+        setCode(path)
+    }
 
+    useEffect(() => {
+        getReferal()
+    }, [])
 
     return (
         <div className="d-flex justify-content-center">
@@ -686,7 +625,7 @@ const Register = ({ Code }) => {
                                         <input
 
                                             maxLength="13"
-                                            type="text"
+                                            type="tel"
                                             className="form-control" defaultValue={cnic}
                                             onChange={(e) => setCnic(e.target.value)}
                                             placeholder="Type your CNIC without dashes"
