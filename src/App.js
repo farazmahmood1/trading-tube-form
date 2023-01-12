@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./Components/Register";
-import Welcome from "./Components/Welcome";
 
 function App() {
   const [code, setCode] = useState("");
@@ -21,7 +20,6 @@ function App() {
     <div>
       <Router>
         <Routes>
-          {/* <Route path="/" element={<Welcome />} /> */}
           <Route path="/" element={<Register Code={code} />} />
         </Routes>
       </Router>

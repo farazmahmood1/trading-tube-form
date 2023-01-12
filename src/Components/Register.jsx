@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { useState, useEffect } from "react";
+import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import Congratulation from "./Congratulation";
 import CountryCode from './CountryCode'
@@ -8,8 +9,9 @@ import { useTimer } from 'react-timer-hook';
 import { EncryptStorage } from 'encrypt-storage';
 import authentication from "../firebaseConfig";
 import { FirebaseAppSettings } from "firebase/app";
-
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+toast.configure()
+
 const Register = ({ Code }) => {
 
 
@@ -49,6 +51,9 @@ const Register = ({ Code }) => {
 
     // confirm otp
     const [confirm, setConfirm] = useState(null)
+
+    // Remaining users left
+    const [remainingUsers, setRemainingUsers] = useState()
 
     const onNext = () => {
         if (index === 0) {
@@ -173,7 +178,7 @@ const Register = ({ Code }) => {
         const RefObj = {
             referal_code: code
         }
-        axios.post("https://apis.tradingtube.net/api/checkcode", RefObj)
+        axios.post(`${process.env.REACT_APP_BASE_URL}checkcode`, RefObj)
             .then((res) => {
                 if (res.data.status === "200") {
                     setLoader(false);
@@ -201,6 +206,16 @@ const Register = ({ Code }) => {
                     toast.warning("Something went wrong", { theme: "dark" });
                 }
             });
+    }
+
+    const usersLeft = () => {
+        axios.post(`${process.env.REACT_APP_BASE_URL}userscount`)
+            .then((res) => {
+                setRemainingUsers(res.data.users);
+            })
+            .catch((err) => {
+                return null;
+            })
     }
 
     const requestOTP = async () => {
@@ -324,6 +339,13 @@ const Register = ({ Code }) => {
         setShowPassword(!showPassword)
     }
 
+    function getReferal() {
+        const url = `${window.location.href}`;
+        const part = url.split("?");
+        const path = part[1];
+        setCode(path)
+    }
+
     const headingChange = () => {
         if (index === 0) {
             return (
@@ -364,15 +386,9 @@ const Register = ({ Code }) => {
         }
     }
 
-    function getReferal() {
-        const url = `${window.location.href}`;
-        const part = url.split("?");
-        const path = part[1];
-        setCode(path)
-    }
-
     useEffect(() => {
-        getReferal()
+        getReferal();
+        usersLeft();
     }, [])
 
     return (
@@ -417,7 +433,7 @@ const Register = ({ Code }) => {
 
                                     <p className="mt-3">
                                         Promotion offer is only for first 10,000 users, Hurry up only{" "}
-                                        <span style={{ color: "#CEB775" }}>9000</span>/10000 registers left.{" "}
+                                        <span style={{ color: "#CEB775" }}>{`${6500 + remainingUsers}`} </span>/10000 registers left.{" "}
                                     </p>
                                 </div>
                             </>
@@ -640,7 +656,6 @@ const Register = ({ Code }) => {
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"
                                         />
-                                        {/* {fielderrorstatus()} */}
                                         {cnicField === true ? <p className="form-text text-danger">Your CNIC should only be 13 digits</p> : null}
 
                                     </div>
