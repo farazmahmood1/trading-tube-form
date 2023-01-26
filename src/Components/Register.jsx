@@ -55,6 +55,7 @@ const Register = ({ Code }) => {
     // Remaining users left
     const [remainingUsers, setRemainingUsers] = useState()
 
+
     const onNext = () => {
         if (index === 0) {
             if (!code) {
@@ -312,7 +313,7 @@ const Register = ({ Code }) => {
                     setLoader(false)
 
                     setIndex(index + 1);
-                    requestOTP()
+                    // requestOTP()
                 }
             })
             .catch(err => {
@@ -351,9 +352,9 @@ const Register = ({ Code }) => {
             return (
                 <>
                     <div className="text-center" style={{ marginTop: '6em' }}>
-                        <h1 style={{ color: "#CEB775" }}>Register Now!</h1>
+                        <h1 style={{ color: "#3EB8B4" }}>Register Now!</h1>
                         <p className="me-3 ms-3">
-                            Welcome to Trading Tube, a platform where you can earn up to 50k in a
+                            Welcome to PL-Share Trading, a platform where you can earn up to 50k in a
                             month easily! Enter the refer code below to register yourself and get started ...
                         </p>
                     </div>
@@ -378,7 +379,7 @@ const Register = ({ Code }) => {
                     <div className="text-center" style={{ marginTop: '3em' }}>
                         <h1>Welcome</h1>
                         <p className="me-3 ms-3 text-center">
-                            Please fill the following details to get registered on Trading Tube
+                            Please fill the following details to get registered on PL-Share Trading
                         </p>
                     </div>
                 </>
@@ -413,9 +414,9 @@ const Register = ({ Code }) => {
                                             defaultValue={code}
                                             onChange={(e) => setCode(e.target.value)}
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
-                                                borderColor: "#CEB775",
+                                                borderColor: "#3EB8B4",
                                                 borderRadius: "10PX",
                                             }}
                                             aria-label="Sizing example input"
@@ -433,7 +434,7 @@ const Register = ({ Code }) => {
 
                                     <p className="mt-3">
                                         Promotion offer is only for first 10,000 users, Hurry up only{" "}
-                                        <span style={{ color: "#CEB775" }}>{`${6500 + remainingUsers}`} </span>/10000 registers left.{" "}
+                                        <span style={{ color: "#3EB8B4" }}>9340 </span>/10000 registers left.{" "}
                                     </p>
                                 </div>
                             </>
@@ -454,13 +455,13 @@ const Register = ({ Code }) => {
                                             onChange={(e) => setFname(e.target.value)}
                                             placeholder="Enter your first name" defaultValue={fname}
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
                                                     wstatus === true && fname === ""
                                                         ? "red"
-                                                        : "#CEB775",
+                                                        : "#3EB8B4",
                                             }}
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"
@@ -476,13 +477,13 @@ const Register = ({ Code }) => {
                                             onChange={(e) => setLname(e.target.value)}
                                             placeholder="Enter your last name" defaultValue={lname}
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
                                                     wstatus === true && lname === ""
                                                         ? "red"
-                                                        : "#CEB775",
+                                                        : "#3EB8B4",
                                             }}
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"
@@ -498,13 +499,13 @@ const Register = ({ Code }) => {
                                             onChange={(e) => setUserName(e.target.value)}
                                             placeholder="Enter your username" defaultValue={userName}
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
                                                     wstatus === true && userName === ""
                                                         ? "red"
-                                                        : "#CEB775",
+                                                        : "#3EB8B4",
                                             }}
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"
@@ -520,13 +521,13 @@ const Register = ({ Code }) => {
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="Enter your email" defaultValue={email}
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
                                                     wstatus === true && email === ""
                                                         ? "red"
-                                                        : "#CEB775",
+                                                        : "#3EB8B4",
                                             }}
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"
@@ -549,11 +550,11 @@ const Register = ({ Code }) => {
 
                                         <div className="input-group">
                                             <select className="form-select" id="inputGroupSelect04" onChange={(e) => setCountryCode(e.target.value)} style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
-                                                    "#CEB775",
+                                                    "#3EB8B4",
                                             }} aria-label="Example select with button addon">
 
                                                 {
@@ -570,13 +571,13 @@ const Register = ({ Code }) => {
                                             <input type="number" className="form-control w-50" placeholder=" XXX XXXXXXX"
                                                 onChange={(e) => setPhone(e.target.value)} defaultValue={phone}
                                                 style={{
-                                                    backgroundColor: "#171717",
+                                                    backgroundColor: "#161616",
                                                     color: "#F6F6F6",
                                                     borderRadius: "10PX",
                                                     borderColor:
                                                         pstatus === true && phone === ""
                                                             ? "red"
-                                                            : "#CEB775",
+                                                            : "#3EB8B4",
                                                 }} aria-label="Username" aria-describedby="basic-addon1" />
                                         </div>
                                     </div>
@@ -592,13 +593,13 @@ const Register = ({ Code }) => {
                                                 placeholder="Enter your password" defaultValue={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 style={{
-                                                    backgroundColor: "#171717",
+                                                    backgroundColor: "#161616",
                                                     color: "#F6F6F6",
                                                     borderRadius: "10PX",
                                                     borderColor:
                                                         pstatus === true && password === ""
                                                             ? "red"
-                                                            : "#CEB775",
+                                                            : "#3EB8B4",
                                                 }}
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
@@ -619,13 +620,13 @@ const Register = ({ Code }) => {
                                                 onChange={(e) => setcnfrmPassword(e.target.value)}
                                                 placeholder="Re-type your password"
                                                 style={{
-                                                    backgroundColor: "#171717",
+                                                    backgroundColor: "#161616",
                                                     color: "#F6F6F6",
                                                     borderRadius: "10PX",
                                                     borderColor:
                                                         pstatus === true && cnfrmPassword === ""
                                                             ? "red"
-                                                            : "#CEB775",
+                                                            : "#3EB8B4",
                                                 }}
                                                 aria-label="Sizing example input"
                                                 aria-describedby="inputGroup-sizing-lg"
@@ -647,11 +648,11 @@ const Register = ({ Code }) => {
                                             placeholder="Type your CNIC without dashes"
                                             required
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
-                                                    pstatus === true && cnic === "" ? "red" : "#CEB775"
+                                                    pstatus === true && cnic === "" ? "red" : "#3EB8B4"
                                             }}
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"
@@ -677,9 +678,9 @@ const Register = ({ Code }) => {
                                             onChange={(e) => setQuestion(e.target.value)}
                                             aria-label="Default select example"
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
-                                                borderColor: "#CEB775",
+                                                borderColor: "#3EB8B4",
                                                 borderRadius: "10PX",
                                             }}
                                         >
@@ -703,13 +704,13 @@ const Register = ({ Code }) => {
                                             onChange={(e) => setAnswer(e.target.value)}
                                             placeholder="Answer of the question ..."
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
                                                     qstatus === true && answer === ""
                                                         ? "red"
-                                                        : "#CEB775",
+                                                        : "#3EB8B4",
                                             }}
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"
@@ -732,11 +733,11 @@ const Register = ({ Code }) => {
                                             onChange={(e) => setOtp(e.target.value)}
                                             placeholder="Enter the OTP sent to your Phone"
                                             style={{
-                                                backgroundColor: "#171717",
+                                                backgroundColor: "#161616",
                                                 color: "#F6F6F6",
                                                 borderRadius: "10PX",
                                                 borderColor:
-                                                    "#CEB775",
+                                                    "#3EB8B4",
                                             }}
                                             aria-label="Sizing example input"
                                             aria-describedby="inputGroup-sizing-lg"

@@ -4,25 +4,25 @@
 }
 
 body {
-  background: #0f0e0e;
+  background: #161616;
 }
 
 .btn-outline-warning {
-  color: #ceb775;
-  border-color: #ceb775;
+  color: #3EB8B4;
+  border-color: #3EB8B4;
 }
 
 .btn-outline-warning:focus {
-  box-shadow: 0 0 0 0.2rem #ceb775;
-  -webkit-box-shadow: 0 0 0 0.2rem #ceb775;
+  box-shadow: 0 0 0 0.2rem #3EB8B4;
+  -webkit-box-shadow: 0 0 0 0.2rem #3EB8B4;
   outline: 0;
 }
 
 .btn-outline-warning:hover,
 .btn-outline-warning:active {
   color: #fff;
-  background-color: #ceb775;
-  border-color: #ceb775;
+  background-color: #3EB8B4;
+  border-color: #3EB8B4;
 }
 
 .form-input {
@@ -37,7 +37,7 @@ body {
   top: 0;
   right: 0;
   font-size: 25px;
-  color: #ceb775;
+  color: #3EB8B4;
   height: 100%;
   display: flex;
   align-items: center;
